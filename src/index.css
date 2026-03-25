@@ -1,0 +1,108 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Open+Sans:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
+    --primary: 213 72% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 160 55% 40%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 210 15% 93%;
+    --muted-foreground: 215 12% 50%;
+
+    --accent: 160 55% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
+    --ring: 213 72% 38%;
+
+    --radius: 0.625rem;
+
+    --sidebar-background: 213 72% 20%;
+    --sidebar-foreground: 210 20% 95%;
+    --sidebar-primary: 160 55% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 213 60% 28%;
+    --sidebar-accent-foreground: 210 20% 95%;
+    --sidebar-border: 213 50% 30%;
+    --sidebar-ring: 160 55% 50%;
+
+    /* Custom tokens */
+    --hero-gradient: linear-gradient(135deg, hsl(213 72% 38%) 0%, hsl(213 72% 28%) 50%, hsl(160 55% 32%) 100%);
+    --card-shadow: 0 2px 12px -2px hsl(213 72% 38% / 0.1);
+    --card-hover-shadow: 0 8px 24px -4px hsl(213 72% 38% / 0.18);
+    --whatsapp: 142 70% 45%;
+  }
+
+  .dark {
+    --background: 215 25% 10%;
+    --foreground: 210 20% 95%;
+    --card: 215 25% 14%;
+    --card-foreground: 210 20% 95%;
+    --popover: 215 25% 14%;
+    --popover-foreground: 210 20% 95%;
+    --primary: 213 72% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 55% 45%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 215 20% 20%;
+    --muted-foreground: 215 15% 60%;
+    --accent: 160 55% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 215 20% 22%;
+    --input: 215 20% 22%;
+    --ring: 213 72% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+    /* smooth, lightweight transitions for color/shadow/transform to improve UX */
+    transition-property: color, background-color, border-color, box-shadow, transform;
+    transition-duration: 180ms;
+    transition-timing-function: cubic-bezier(.4,0,.2,1);
+  }
+
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+  }
+
+  /* Consistent heading scale / hierarchy */
+  h1 { @apply text-4xl md:text-5xl lg:text-6xl leading-tight; }
+  h2 { @apply text-2xl md:text-3xl leading-snug; }
+  h3 { @apply text-xl md:text-2xl; }
+  h1,h2,h3,h4,h5,h6 { @apply font-heading font-bold tracking-tight; }
+
+  /* Reusable spacing utilities for consistent layout */
+  .section { @apply py-12 md:py-16; }
+  .hero { @apply relative overflow-hidden py-20 md:py-28; }
+
+  /* Small helper for card/button transitions */
+  .transition-smooth { transition: color .18s ease, background-color .18s ease, box-shadow .2s ease, transform .2s ease; }
+  .card-elevated { @apply transition-shadow hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-1; }
+}
+

@@ -4,19 +4,19 @@ const { auth, adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Get all products
+// 🔹 Get all products
 router.get('/', async (req, res) => {
   try {
     const products = await Product.find().sort({ createdAt: -1 });
     res.json(products);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
-// Create product (admin)
-router.post('/', auth, adminAuth, async (req, res) => {
+// 🔹 Create product (admin)
+router.post('/', async (req, res) => {
   try {
     const { name, category, description, price, stock, image } = req.body;
 
@@ -32,12 +32,12 @@ router.post('/', auth, adminAuth, async (req, res) => {
     await product.save();
     res.json(product);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
-// Update product (admin)
+// 🔹 Update product (admin)
 router.put('/:id', auth, adminAuth, async (req, res) => {
   try {
     const { name, category, description, price, stock, image } = req.body;
@@ -54,12 +54,12 @@ router.put('/:id', auth, adminAuth, async (req, res) => {
 
     res.json(product);
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 
-// Delete product (admin)
+// 🔹 Delete product (admin)
 router.delete('/:id', auth, adminAuth, async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
@@ -70,8 +70,8 @@ router.delete('/:id', auth, adminAuth, async (req, res) => {
 
     res.json({ message: 'Product deleted' });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error(err);
+    res.status(500).json({ message: 'Server Error' });
   }
 });
 

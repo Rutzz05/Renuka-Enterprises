@@ -5,7 +5,10 @@ import { bookingsAPI, invoicesAPI } from '../services/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, FileText, Plus } from 'lucide-react';
+import {
+  Calendar, FileText, Plus, ClipboardList, CheckCircle2,
+  Clock, ArrowRight, ShoppingBag, User, Mail, Shield, Loader2,
+} from 'lucide-react';
 
 const CustomerDashboard = () => {
   const { user, logout } = useAuth();
@@ -32,132 +35,281 @@ const CustomerDashboard = () => {
     fetchData();
   }, []);
 
-  const getStatusColor = (status: string) => {
+  const getStatusConfig = (status: string) => {
     switch (status) {
-      case 'pending': return 'bg-yellow-100 text-yellow-800';
-      case 'in-progress': return 'bg-blue-100 text-blue-800';
-      case 'completed': return 'bg-green-100 text-green-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'pending':
+        return { bg: 'bg-amber-50 text-amber-700 border-amber-200', icon: <Clock className="w-3 h-3" />, dot: 'bg-amber-400' };
+      case 'in-progress':
+        return { bg: 'bg-blue-50 text-blue-700 border-blue-200', icon: <Loader2 className="w-3 h-3 animate-spin" />, dot: 'bg-blue-400' };
+      case 'completed':
+        return { bg: 'bg-emerald-50 text-emerald-700 border-emerald-200', icon: <CheckCircle2 className="w-3 h-3" />, dot: 'bg-emerald-400' };
+      default:
+        return { bg: 'bg-gray-50 text-gray-700 border-gray-200', icon: null, dot: 'bg-gray-400' };
     }
   };
 
+  const totalBookings = bookings.length;
+  const pendingBookings = bookings.filter((b: any) => b.status === 'pending').length;
+  const completedBookings = bookings.filter((b: any) => b.status === 'completed').length;
+  const totalInvoiceAmount = invoices.reduce((sum: number, inv: any) => sum + (inv.totalAmount || 0), 0);
+
   if (loading) {
-    return <div className="container py-8">Loading...</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <p className="text-muted-foreground text-sm">Loading your dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="container py-8">
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-3xl font-bold">Welcome, {user?.name}</h1>
-          <p className="text-muted-foreground">Manage your services and view your history</p>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/[0.03]">
+      {/* Hero Section */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[var(--hero-gradient)] opacity-95" />
+        <div className="absolute inset-0" style={{
+          backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 40%)',
+        }} />
+        <div className="relative container py-10 md:py-14">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+              </div>
+              <div>
+                <p className="text-white/70 text-sm font-medium">Welcome back,</p>
+                <h1 className="text-white font-bold" style={{ fontSize: '1.75rem', lineHeight: '2.25rem' }}>
+                  {user?.name}
+                </h1>
+                <p className="text-white/60 text-sm mt-0.5">Manage your services and view your history</p>
+              </div>
+            </div>
+            <Button
+              onClick={logout}
+              variant="outline"
+              className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
+            >
+              Logout
+            </Button>
+          </div>
         </div>
-        <Button onClick={logout} variant="outline">
-          Logout
-        </Button>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              Service Bookings
-            </CardTitle>
-            <CardDescription>Your service booking history</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {bookings.length === 0 ? (
-                <p className="text-muted-foreground">No bookings yet</p>
-              ) : (
-                bookings.slice(0, 3).map((booking: any) => (
-                  <div key={booking._id} className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">{booking.serviceType}</p>
-                      <p className="text-sm text-muted-foreground">{booking.issueType}</p>
-                    </div>
-                    <Badge className={getStatusColor(booking.status)}>
-                      {booking.status}
-                    </Badge>
+      <div className="container -mt-6 relative z-10 pb-12">
+        {/* Stat Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {[
+            { label: 'Total Bookings', value: totalBookings, icon: ClipboardList, color: 'from-blue-500 to-blue-600', iconBg: 'bg-blue-100 text-blue-600' },
+            { label: 'Pending', value: pendingBookings, icon: Clock, color: 'from-amber-500 to-amber-600', iconBg: 'bg-amber-100 text-amber-600' },
+            { label: 'Completed', value: completedBookings, icon: CheckCircle2, color: 'from-emerald-500 to-emerald-600', iconBg: 'bg-emerald-100 text-emerald-600' },
+            { label: 'Total Billed', value: `₹${totalInvoiceAmount.toLocaleString()}`, icon: FileText, color: 'from-violet-500 to-violet-600', iconBg: 'bg-violet-100 text-violet-600' },
+          ].map((stat) => (
+            <Card key={stat.label} className="card-elevated border-0 shadow-md overflow-hidden">
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{stat.label}</p>
+                    <p className="text-2xl font-bold mt-1.5">{stat.value}</p>
                   </div>
-                ))
-              )}
-            </div>
-            <Link to="/booking">
-              <Button className="w-full mt-4" size="sm">
-                <Plus className="w-4 h-4 mr-2" />
-                Book New Service
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="w-5 h-5" />
-              Invoices
-            </CardTitle>
-            <CardDescription>Your billing history</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {invoices.length === 0 ? (
-                <p className="text-muted-foreground">No invoices yet</p>
-              ) : (
-                invoices.slice(0, 3).map((invoice: any) => (
-                  <div key={invoice._id} className="flex justify-between items-center">
-                    <div>
-                      <p className="font-medium">{invoice.invoiceId}</p>
-                      <p className="text-sm text-muted-foreground">
-                        ₹{invoice.totalAmount}
-                      </p>
-                    </div>
-                    <Badge variant={invoice.status === 'paid' ? 'default' : 'secondary'}>
-                      {invoice.status}
-                    </Badge>
+                  <div className={`w-10 h-10 rounded-xl ${stat.iconBg} flex items-center justify-center`}>
+                    <stat.icon className="w-5 h-5" />
                   </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+                </div>
+                <div className={`h-1 w-full rounded-full bg-gradient-to-r ${stat.color} mt-4 opacity-60`} />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Link to="/booking">
-              <Button className="w-full justify-start" variant="outline">
-                <Calendar className="w-4 h-4 mr-2" />
-                Book a Service
-              </Button>
-            </Link>
-            <Link to="/products">
-              <Button className="w-full justify-start" variant="outline">
-                <Plus className="w-4 h-4 mr-2" />
-                View Products
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
+        {/* Main Content */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Bookings - Takes 2 cols */}
+          <div className="lg:col-span-2 space-y-6">
+            <Card className="border-0 shadow-md overflow-hidden">
+              <CardHeader className="pb-3 border-b bg-gradient-to-r from-primary/[0.03] to-transparent">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Calendar className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <CardTitle style={{ fontSize: '1.1rem' }}>Service Bookings</CardTitle>
+                      <CardDescription className="text-xs">Your recent service requests</CardDescription>
+                    </div>
+                  </div>
+                  <Link to="/booking">
+                    <Button size="sm" className="gap-1.5 bg-primary hover:bg-primary/90">
+                      <Plus className="w-3.5 h-3.5" />
+                      New Booking
+                    </Button>
+                  </Link>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                {bookings.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+                    <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
+                      <Calendar className="w-8 h-8 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-muted-foreground font-medium">No bookings yet</p>
+                    <p className="text-muted-foreground/60 text-sm mt-1">Book your first service to get started</p>
+                    <Link to="/booking" className="mt-4">
+                      <Button size="sm" variant="outline" className="gap-1.5">
+                        <Plus className="w-3.5 h-3.5" />
+                        Book a Service
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {bookings.slice(0, 5).map((booking: any) => {
+                      const statusConfig = getStatusConfig(booking.status);
+                      return (
+                        <div key={booking._id} className="flex items-center justify-between px-6 py-4 hover:bg-muted/30 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-2 h-2 rounded-full ${statusConfig.dot}`} />
+                            <div>
+                              <p className="font-semibold text-sm">{booking.serviceType}</p>
+                              <p className="text-xs text-muted-foreground">{booking.issueType}</p>
+                            </div>
+                          </div>
+                          <Badge className={`${statusConfig.bg} border gap-1 text-xs font-medium`}>
+                            {statusConfig.icon}
+                            {booking.status}
+                          </Badge>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Account Info</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              <p><strong>Name:</strong> {user?.name}</p>
-              <p><strong>Email:</strong> {user?.email}</p>
-              <p><strong>Role:</strong> {user?.role}</p>
-            </div>
-          </CardContent>
-        </Card>
+            {/* Invoices */}
+            <Card className="border-0 shadow-md overflow-hidden">
+              <CardHeader className="pb-3 border-b bg-gradient-to-r from-violet-500/[0.03] to-transparent">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-violet-100 flex items-center justify-center">
+                    <FileText className="w-5 h-5 text-violet-600" />
+                  </div>
+                  <div>
+                    <CardTitle style={{ fontSize: '1.1rem' }}>Invoices</CardTitle>
+                    <CardDescription className="text-xs">Your billing history</CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                {invoices.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-12 text-center px-4">
+                    <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
+                      <FileText className="w-8 h-8 text-muted-foreground/50" />
+                    </div>
+                    <p className="text-muted-foreground font-medium">No invoices yet</p>
+                    <p className="text-muted-foreground/60 text-sm mt-1">Invoices will appear here after service</p>
+                  </div>
+                ) : (
+                  <div className="divide-y">
+                    {invoices.slice(0, 5).map((invoice: any) => (
+                      <Link key={invoice._id} to={`/invoice/${invoice._id}`} className="block">
+                        <div className="flex items-center justify-between px-6 py-4 hover:bg-muted/30 transition-colors group">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-lg bg-muted/60 flex items-center justify-center">
+                              <FileText className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-sm">{invoice.invoiceId}</p>
+                              <p className="text-xs text-muted-foreground">
+                                {new Date(invoice.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <div className="text-right">
+                              <p className="font-bold text-sm">₹{invoice.totalAmount?.toLocaleString()}</p>
+                              <Badge
+                                variant={invoice.status === 'paid' ? 'default' : 'secondary'}
+                                className="text-[10px] px-1.5 py-0"
+                              >
+                                {invoice.status}
+                              </Badge>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Sidebar */}
+          <div className="space-y-6">
+            {/* Quick Actions */}
+            <Card className="border-0 shadow-md overflow-hidden">
+              <CardHeader className="pb-3 border-b">
+                <CardTitle style={{ fontSize: '1.1rem' }}>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="p-4 space-y-2">
+                <Link to="/booking">
+                  <Button className="w-full justify-start gap-3 h-12 bg-primary/5 text-primary hover:bg-primary hover:text-white border border-primary/20 hover:border-primary transition-all" variant="outline">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Calendar className="w-4 h-4" />
+                    </div>
+                    Book a Service
+                  </Button>
+                </Link>
+                <Link to="/products">
+                  <Button className="w-full justify-start gap-3 h-12 bg-secondary/5 text-secondary hover:bg-secondary hover:text-white border border-secondary/20 hover:border-secondary transition-all mt-2" variant="outline">
+                    <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center">
+                      <ShoppingBag className="w-4 h-4" />
+                    </div>
+                    View Products
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            {/* Account Info */}
+            <Card className="border-0 shadow-md overflow-hidden">
+              <CardHeader className="pb-3 border-b">
+                <CardTitle style={{ fontSize: '1.1rem' }}>Account Info</CardTitle>
+              </CardHeader>
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <User className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Name</p>
+                    <p className="font-semibold text-sm">{user?.name}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <Mail className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Email</p>
+                    <p className="font-semibold text-sm">{user?.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-emerald-100 flex items-center justify-center">
+                    <Shield className="w-4 h-4 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Account Type</p>
+                    <p className="font-semibold text-sm capitalize">{user?.role}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

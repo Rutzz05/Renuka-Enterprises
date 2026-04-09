@@ -1,27 +1,29 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 const Product = require('./models/Product');
+
 require('dotenv').config();
 
 const seedData = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/renuka-enterprises');
 
-    // Create admin user
     const adminExists = await User.findOne({ role: 'admin' });
     if (!adminExists) {
+      const password = await bcrypt.hash('password', 10);
       const admin = new User({
         name: 'Admin',
         email: 'admin@renuka.com',
-        password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password: password
+        password,
         phone: '9876543210',
         role: 'admin',
       });
+
       await admin.save();
       console.log('Admin user created: admin@renuka.com / password');
     }
 
-    // Create sample products
     const products = [
       {
         name: 'Aquaguard Compact',
@@ -33,21 +35,21 @@ const seedData = async () => {
       {
         name: 'Aquaguard Grande',
         category: 'aquaguard',
-        description: 'Advanced water purifier with RO+UV+UF technology',
+        description: 'Advanced RO+UV+UF purifier for larger homes',
         price: 25000,
         stock: 5,
       },
       {
         name: 'Luminous Inverter 3.5KVA',
         category: 'inverter',
-        description: '3.5KVA inverter with battery backup',
+        description: '3.5KVA inverter with dependable battery backup',
         price: 35000,
         stock: 8,
       },
       {
         name: 'Exide Battery 150AH',
         category: 'battery',
-        description: '150AH tubular battery for inverter',
+        description: '150AH tubular battery for inverter systems',
         price: 18000,
         stock: 15,
       },

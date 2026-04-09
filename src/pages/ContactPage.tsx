@@ -1,5 +1,5 @@
 import { Phone, MapPin, MessageCircle } from "lucide-react";
-import ServiceBookingForm from "@/components/ServiceBookingForm";
+import ServiceBookingFormV2 from "@/components/ServiceBookingFormV2";
 
 const PHONE = "+919876543210";
 
@@ -20,7 +20,11 @@ export default function ContactPage() {
         <div className="grid lg:grid-cols-3 gap-8 items-start">
           {/* Booking form (reusable component) */}
           <div className="lg:col-span-2">
-            <ServiceBookingForm onSubmit={(data) => console.log('service booking (temp):', data)} />
+            <ServiceBookingFormV2
+              source="contact"
+              title="Request a callback or technician visit"
+              subtitle="Share your service need here and our team will call to confirm pricing, timing, and the visit slot."
+            />
           </div>
 
           {/* Contact Info */}

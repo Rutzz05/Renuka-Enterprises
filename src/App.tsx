@@ -7,17 +7,18 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import ServicesPage from "./pages/ServicesPage";
-import ProductsPage from "./pages/ProductsPage";
+import ProductsPage from "./pages/ProductsPageV2";
 import ContactPage from "./pages/ContactPage";
-import AdminPage from "./pages/AdminPage";
+import AdminPage from "./pages/AdminPageV2";
 import NotFound from "./pages/NotFound";
 import SelectLoginType from "./pages/SelectLoginType";
 import CustomerLogin from "./pages/CustomerLogin";
 import AdminLogin from "./pages/AdminLogin";
-import CustomerDashboard from "./pages/CustomerDashboard";
+import CustomerDashboard from "./pages/CustomerDashboardV2";
 import BookingPage from "./pages/BookingPage";
-import InvoicePage from "./pages/InvoicePage";
+import InvoicePage from "./pages/InvoicePageV2";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RegisterPage from "./pages/RegisterPage";
 
 const queryClient = new QueryClient();
 

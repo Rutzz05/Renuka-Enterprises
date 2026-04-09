@@ -2,105 +2,123 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { auth } = require('../middleware/auth');
+const { auth, adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
 
-// Register
+const buildToken = (user) =>
+  jwt.sign(
+    {
+      user: {
+        id: user._id.toString(),
+        role: user.role,
+      },
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
+
+const serializeUser = (user) => ({
+  id: user._id.toString(),
+  name: user.name,
+  email: user.email,
+  phone: user.phone,
+  role: user.role,
+});
+
 router.post('/register', async (req, res) => {
   try {
-    const { name, email, password, phone, role } = req.body;
+    const { name, email, phone, password } = req.body;
 
-    let user = await User.findOne({ email });
-    if (user) {
-      return res.status(400).json({ message: 'User already exists' });
+    if (!name || !email || !phone || !password) {
+      return res.status(400).json({ message: 'Name, email, phone, and password are required' });
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+    }
 
-    user = new User({
-      name,
-      email,
+    const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
+    if (existingUser) {
+      return res.status(409).json({ message: 'An account with this email already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
+      phone: phone.trim(),
       password: hashedPassword,
-      phone,
-      role: role || 'customer',
+      role: 'customer',
     });
 
     await user.save();
 
-    const payload = {
-      user: {
-        id: user.id,
-        role: user.role,
-      },
-    };
-
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '1h' },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
-      }
-    );
+    return res.status(201).json({
+      token: buildToken(user),
+      user: serializeUser(user),
+    });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error(err);
+    return res.status(500).json({ message: 'Unable to register user' });
   }
 });
 
-// Login
 router.post('/login', async (req, res) => {
   try {
     const { email, password, expectedRole } = req.body;
 
-    const user = await User.findOne({ email });
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase().trim() }).select('+password');
+
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Check if the user's role matches the expected role
-    if (expectedRole && user.role !== expectedRole) {
-      return res.status(403).json({ message: `Access denied. This login is for ${expectedRole}s only.` });
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    const payload = {
-      user: {
-        id: user.id,
-        role: user.role,
-      },
-    };
+    if (expectedRole && user.role !== expectedRole) {
+      return res.status(403).json({ message: 'You do not have access to this portal' });
+    }
 
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET || 'secret',
-      { expiresIn: '1h' },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token, user: { id: user.id, name: user.name, email: user.email, role: user.role } });
-      }
-    );
+    return res.json({
+      token: buildToken(user),
+      user: serializeUser(user),
+    });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error(err);
+    return res.status(500).json({ message: 'Unable to log in' });
   }
 });
 
-// Get current user
 router.get('/me', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.user.id).select('-password');
-    res.json(user);
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.json(serializeUser(user));
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    console.error(err);
+    return res.status(500).json({ message: 'Unable to fetch current user' });
+  }
+});
+
+router.get('/customers', auth, adminAuth, async (_req, res) => {
+  try {
+    const customers = await User.find({ role: 'customer' }).sort({ createdAt: -1 });
+    return res.json(customers.map(serializeUser));
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Unable to fetch customers' });
   }
 });
 

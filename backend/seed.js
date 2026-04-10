@@ -9,19 +9,21 @@ const seedData = async () => {
   try {
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/renuka-enterprises');
 
-    const adminExists = await User.findOne({ role: 'admin' });
+    const adminExists = await User.findOne({ email: 'admin@gmail.com' });
     if (!adminExists) {
-      const password = await bcrypt.hash('password', 10);
+      const hashedPassword = await bcrypt.hash('123456', 10);
       const admin = new User({
-        name: 'Admin',
-        email: 'admin@renuka.com',
-        password,
+        name: 'Administrator',
+        email: 'admin@gmail.com',
+        password: hashedPassword,
         phone: '9876543210',
         role: 'admin',
       });
 
       await admin.save();
-      console.log('Admin user created: admin@renuka.com / password');
+      console.log('✅ Default admin user created: admin@gmail.com / 123456');
+    } else {
+      console.log('✅ Admin user already exists');
     }
 
     const products = [

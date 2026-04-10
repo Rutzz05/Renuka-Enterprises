@@ -284,6 +284,16 @@ export default function AdminPageV2() {
         </div>
 
         <div className="mt-8 flex flex-wrap gap-3">
+          <Link to="/">
+            <Button variant="outline" className="gap-2 !bg-slate-100 text-slate-700 hover:!bg-slate-200">
+              ← Back to Home
+            </Button>
+          </Link>
+          <Link to="/products">
+            <Button variant="outline" className="gap-2 !bg-blue-50 text-blue-700 hover:!bg-blue-100 border-blue-200">
+              📦 View Site Products
+            </Button>
+          </Link>
           {dashboardTabs.map((tab) => (
             <button
               key={tab}

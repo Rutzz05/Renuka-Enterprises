@@ -7,18 +7,19 @@ import { AuthProvider } from "./contexts/AuthContext";
 import Layout from "./components/Layout";
 import HomePage from "./pages/HomePage";
 import ServicesPage from "./pages/ServicesPage";
-import ProductsPage from "./pages/ProductsPageV2";
+import ProductsPage from "./pages/ProductsPage";
 import ContactPage from "./pages/ContactPage";
-import AdminPage from "./pages/AdminPageV2";
+import AdminPageV2 from "./pages/AdminPageV2";
 import NotFound from "./pages/NotFound";
 import SelectLoginType from "./pages/SelectLoginType";
 import CustomerLogin from "./pages/CustomerLogin";
 import AdminLogin from "./pages/AdminLogin";
-import CustomerDashboard from "./pages/CustomerDashboardV2";
+import CustomerDashboard from "./pages/CustomerDashboard";
 import BookingPage from "./pages/BookingPage";
-import InvoicePage from "./pages/InvoicePageV2";
+import InvoicePage from "./pages/InvoicePage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterPage from "./pages/RegisterPage";
+
 
 const queryClient = new QueryClient();
 
@@ -39,11 +40,11 @@ const App = () => (
               <Route path="/login/customer" element={<CustomerLogin />} />
               <Route path="/login/admin" element={<AdminLogin />} />
               <Route path="/register" element={<RegisterPage />} />
+              <Route path="/dashboard" element={<ProtectedRoute><CustomerDashboard /></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute role="admin"><AdminPageV2 /></ProtectedRoute>} />
+              <Route path="/booking" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
+              <Route path="/invoice/:id" element={<ProtectedRoute><InvoicePage /></ProtectedRoute>} />
             </Route>
-            <Route path="/admin" element={<ProtectedRoute role="admin"><AdminPage /></ProtectedRoute>} />
-            <Route path="/dashboard" element={<ProtectedRoute><CustomerDashboard /></ProtectedRoute>} />
-            <Route path="/booking" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
-            <Route path="/invoice/:id" element={<ProtectedRoute><InvoicePage /></ProtectedRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

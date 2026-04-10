@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { invoicesAPI } from '../services/api';
 import { Button } from '@/components/ui/button';
@@ -6,11 +6,13 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Printer, Download, FileText, Loader2, CheckCircle2 } from 'lucide-react';
+import html2pdf from 'html2pdf.js';
 
 const InvoicePage = () => {
   const { id } = useParams();
   const [invoice, setInvoice] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const invoiceContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchInvoice = async () => {
@@ -27,7 +29,21 @@ const InvoicePage = () => {
   }, [id]);
 
   const handlePrint = () => window.print();
-  const handleDownload = () => alert('PDF download functionality would be implemented here');
+  
+  const handleDownload = () => {
+    if (!invoiceContentRef.current || !invoice) return;
+    
+    const element = invoiceContentRef.current;
+    const opt = {
+      margin: 10,
+      filename: `Invoice_${invoice.invoiceId}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+    };
+    
+    html2pdf().set(opt).from(element).save();
+  };
 
   if (loading) {
     return (
@@ -100,7 +116,7 @@ const InvoicePage = () => {
             <div className="h-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600" />
           )}
 
-          <CardContent className="p-8 md:p-10">
+          <CardContent ref={invoiceContentRef} className="p-8 md:p-10">
             {/* Company Header */}
             <div className="text-center mb-8 pb-6 border-b border-dashed">
               <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
@@ -172,9 +188,9 @@ const InvoicePage = () => {
                 {/* Rows */}
                 {invoice.items.map((item: any, index: number) => (
                   <div key={index} className={`grid grid-cols-12 gap-4 px-5 py-4 text-sm ${index % 2 === 0 ? '' : 'bg-muted/20'} ${index < invoice.items.length - 1 ? 'border-b' : ''}`}>
-                    <div className="col-span-5 font-medium">{item.name}</div>
+                    <div className="col-span-5 font-medium">{item.description || item.name}</div>
                     <div className="col-span-2 text-center text-muted-foreground">{item.quantity}</div>
-                    <div className="col-span-2 text-right text-muted-foreground">₹{item.price?.toLocaleString()}</div>
+                    <div className="col-span-2 text-right text-muted-foreground">₹{(item.unitPrice || item.price)?.toLocaleString()}</div>
                     <div className="col-span-3 text-right font-semibold">₹{item.total?.toLocaleString()}</div>
                   </div>
                 ))}

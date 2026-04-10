@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import {
   Calendar, FileText, Plus, ClipboardList, CheckCircle2,
-  Clock, ArrowRight, ShoppingBag, User, Mail, Shield, Loader2,
+  Clock, ArrowRight, ShoppingBag, User, Mail, Shield, Loader2, Wrench,
 } from 'lucide-react';
 
 const CustomerDashboard = () => {
@@ -67,29 +67,30 @@ const CustomerDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/[0.03]">
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[var(--hero-gradient)] opacity-95" />
+      <div className="relative overflow-hidden" style={{
+        background: 'linear-gradient(135deg, #0E3C59 0%, #0A2647 50%, #0F766E 100%)'
+      }}>
         <div className="absolute inset-0" style={{
           backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(255,255,255,0.05) 0%, transparent 40%)',
         }} />
-        <div className="relative container py-10 md:py-14">
+        <div className="relative container py-12 md:py-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm border border-white/20 flex items-center justify-center text-white text-xl font-bold shadow-lg">
+              <div className="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center text-white text-xl font-bold shadow-lg">
                 {user?.name?.charAt(0)?.toUpperCase() || 'U'}
               </div>
               <div>
-                <p className="text-white/70 text-sm font-medium">Welcome back,</p>
+                <p className="text-white/80 text-sm font-semibold">Welcome back,</p>
                 <h1 className="text-white font-bold" style={{ fontSize: '1.75rem', lineHeight: '2.25rem' }}>
                   {user?.name}
                 </h1>
-                <p className="text-white/60 text-sm mt-0.5">Manage your services and view your history</p>
+                <p className="text-white/70 text-sm mt-0.5">Manage your services and view your history</p>
               </div>
             </div>
             <Button
               onClick={logout}
               variant="outline"
-              className="bg-white/10 border-white/20 text-white hover:bg-white/20 backdrop-blur-sm"
+              className="bg-white/15 border-white/30 text-white hover:bg-white/25 backdrop-blur-sm font-semibold"
             >
               Logout
             </Button>
@@ -98,6 +99,65 @@ const CustomerDashboard = () => {
       </div>
 
       <div className="container -mt-6 relative z-10 pb-12">
+        {/* Navigation Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <Link to="/products" className="group">
+            <Card className="border-0 shadow-md overflow-hidden h-full hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer bg-gradient-to-br from-blue-50 to-blue-50/50 border-l-4 border-blue-500">
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full gap-3">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center group-hover:bg-blue-500/30 transition-colors">
+                  <ShoppingBag className="w-5 h-5 text-blue-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-foreground">View Products</p>
+                  <p className="text-xs text-muted-foreground mt-1">Browse available items</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/services" className="group">
+            <Card className="border-0 shadow-md overflow-hidden h-full hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer bg-gradient-to-br from-emerald-50 to-emerald-50/50 border-l-4 border-emerald-500">
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center group-hover:bg-emerald-500/30 transition-colors">
+                  <Wrench className="w-5 h-5 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-foreground">Services</p>
+                  <p className="text-xs text-muted-foreground mt-1">Our service offerings</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/booking" className="group">
+            <Card className="border-0 shadow-md overflow-hidden h-full hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer bg-gradient-to-br from-purple-50 to-purple-50/50 border-l-4 border-purple-500">
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
+                  <Plus className="w-5 h-5 text-purple-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-foreground">New Booking</p>
+                  <p className="text-xs text-muted-foreground mt-1">Book a service now</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/" className="group">
+            <Card className="border-0 shadow-md overflow-hidden h-full hover:shadow-lg hover:-translate-y-1 transition-all cursor-pointer bg-gradient-to-br from-amber-50 to-amber-50/50 border-l-4 border-amber-500">
+              <CardContent className="p-6 flex flex-col items-center justify-center text-center h-full gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center group-hover:bg-amber-500/30 transition-colors">
+                  <ArrowRight className="w-5 h-5 text-amber-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-sm text-foreground">Home</p>
+                  <p className="text-xs text-muted-foreground mt-1">Back to home page</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+
         {/* Stat Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[

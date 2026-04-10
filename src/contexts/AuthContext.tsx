@@ -51,17 +51,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string, expectedRole?: string) => {
-    const response = await authAPI.login({ email, password, expectedRole });
-    const { token, user: userData } = response.data;
-    localStorage.setItem('token', token);
-    setUser(userData);
+    try {
+      const response = await authAPI.login({ email, password, expectedRole });
+      console.log('Login response:', response.data);
+      const { token, user: userData } = response.data;
+      if (!token || !userData) {
+        throw new Error('Invalid response format: missing token or user data');
+      }
+      localStorage.setItem('token', token);
+      setUser(userData);
+    } catch (error: any) {
+      console.error('Login error:', error.response?.data || error.message);
+      throw error;
+    }
   };
 
   const register = async (userData: { name: string; email: string; phone: string; password: string }) => {
-    const response = await authAPI.register(userData);
-    const { token, user: userDataResponse } = response.data;
-    localStorage.setItem('token', token);
-    setUser(userDataResponse);
+    try {
+      const response = await authAPI.register(userData);
+      console.log('Register response:', response.data);
+      const { token, user: userDataResponse } = response.data;
+      if (!token || !userDataResponse) {
+        throw new Error('Invalid response format: missing token or user data');
+      }
+      localStorage.setItem('token', token);
+      setUser(userDataResponse);
+    } catch (error: any) {
+      console.error('Register error:', error.response?.data || error.message);
+      throw error;
+    }
   };
 
   const logout = () => {

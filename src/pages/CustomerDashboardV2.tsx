@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarDays, ClipboardList, FileText, Loader2, LogOut, ArrowRight } from "lucide-react";
+import { CalendarDays, ClipboardList, FileText, Loader2, LogOut, ArrowRight, Zap, File } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,35 +41,67 @@ export default function CustomerDashboardV2() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background via-background to-primary/[0.03]">
         <div className="text-center">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-primary" />
-          <p className="mt-3 text-sm text-muted-foreground">Loading your dashboard...</p>
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          </div>
+          <p className="mt-3 text-slate-600 font-medium">Loading your dashboard...</p>
         </div>
       </div>
     );
   }
 
   const pendingCount = bookings.filter((booking) => booking.status === "pending").length;
+  const completedCount = bookings.filter((booking) => booking.status === "completed").length;
   const totalBilled = invoices.reduce((sum, invoice) => sum + (invoice.totalAmount || 0), 0);
+
+  const statCards = [
+    { 
+      label: "Total Bookings", 
+      value: bookings.length, 
+      icon: ClipboardList,
+      color: "from-blue-500/10 to-blue-500/5",
+      iconColor: "text-blue-600"
+    },
+    { 
+      label: "Pending Requests", 
+      value: pendingCount, 
+      icon: Zap,
+      color: "from-amber-500/10 to-amber-500/5",
+      iconColor: "text-amber-600"
+    },
+    { 
+      label: "Total Billed", 
+      value: `₹${totalBilled.toLocaleString("en-IN")}`, 
+      icon: FileText,
+      color: "from-emerald-500/10 to-emerald-500/5",
+      iconColor: "text-emerald-600"
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f4f8fb_0%,#ffffff_50%,#eff7f3_100%)]">
+      {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-[var(--hero-gradient)] opacity-95" />
-        <div className="relative container py-12 text-white">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -mr-48 -mt-48" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full -ml-48 -mb-48" />
+        
+        <div className="relative container py-16 text-white">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/65">Customer dashboard</p>
-              <h1 className="mt-4 text-4xl font-bold md:text-5xl">Welcome back, {user?.name}.</h1>
-              <p className="mt-3 max-w-2xl text-base text-white/75 md:text-lg">
-                Track service requests, review invoice history, and schedule new visits from one place.
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/65">Welcome Back</p>
+              <h1 className="mt-4 text-4xl font-bold md:text-5xl lg:text-6xl leading-tight">
+                Hi, {user?.name}! 👋
+              </h1>
+              <p className="mt-4 max-w-2xl text-base text-white/75 md:text-lg">
+                Manage your service bookings, track invoices, and schedule maintenance from your personal dashboard.
               </p>
             </div>
             <Button
-              variant="outline"
               onClick={logout}
-              className="border-white/25 bg-white/10 text-white hover:bg-white/20"
+              className="border-white/25 bg-white/10 text-white hover:bg-white/20 rounded-xl font-semibold transition-all hover:scale-105"
             >
               <LogOut className="mr-2 h-4 w-4" />
               Logout
@@ -78,22 +110,26 @@ export default function CustomerDashboardV2() {
         </div>
       </section>
 
-      <section className="container -mt-8 relative z-10 pb-14">
-        <div className="grid gap-4 md:grid-cols-3">
-          {[
-            { label: "Total bookings", value: bookings.length, icon: ClipboardList },
-            { label: "Pending bookings", value: pendingCount, icon: CalendarDays },
-            { label: "Total billed", value: `Rs. ${totalBilled.toLocaleString("en-IN")}`, icon: FileText },
-          ].map((item) => (
-            <Card key={item.label} className="rounded-[24px] border-0 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.5)]">
+      {/* Main Content */}
+      <section className="container -mt-8 relative z-10 pb-16">
+        {/* Stats Cards */}
+        <div className="grid gap-5 md:grid-cols-3 mb-8">
+          {statCards.map((stat, idx) => (
+            <Card 
+              key={stat.label} 
+              className={`rounded-2xl border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br ${stat.color} overflow-hidden animate-in fade-in slide-in-from-bottom-4`}
+              style={{ animationDelay: `${idx * 100}ms` }}
+            >
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">{item.label}</p>
-                    <p className="mt-3 text-3xl font-bold text-slate-900">{item.value}</p>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 mb-2">
+                      {stat.label}
+                    </p>
+                    <p className="text-3xl font-bold text-slate-900">{stat.value}</p>
                   </div>
-                  <div className="rounded-2xl bg-primary/10 p-3">
-                    <item.icon className="h-5 w-5 text-primary" />
+                  <div className={`rounded-xl p-3 bg-white/60 backdrop-blur-sm`}>
+                    <stat.icon className={`h-6 w-6 ${stat.iconColor}`} />
                   </div>
                 </div>
               </CardContent>
@@ -101,36 +137,46 @@ export default function CustomerDashboardV2() {
           ))}
         </div>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-          <Card className="rounded-[28px] border-0 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.5)]">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-6">
+        {/* Main Grid */}
+        <div className="grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+          {/* Bookings Section */}
+          <Card className="rounded-2xl border-0 shadow-lg overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 p-6 bg-gradient-to-r from-slate-50 to-slate-100/50 border-b">
               <div>
-                <CardTitle className="text-xl">Recent bookings</CardTitle>
-                <p className="mt-1 text-sm text-slate-500">Status updates from your latest requests.</p>
+                <CardTitle className="text-xl font-bold text-slate-900">Recent Bookings</CardTitle>
+                <p className="mt-1 text-sm text-slate-500">Your latest service requests</p>
               </div>
               <Link to="/booking">
-                <Button>Book service</Button>
+                <Button className="rounded-xl font-semibold transition-all hover:scale-105">
+                  + Book Service
+                </Button>
               </Link>
             </CardHeader>
-            <CardContent className="px-6 pb-6">
+            <CardContent className="p-6">
               <div className="space-y-3">
                 {bookings.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed p-6 text-center text-sm text-slate-500">
-                    No bookings yet. Create your first service request to get started.
+                  <div className="rounded-2xl border-2 border-dashed border-slate-200 p-8 text-center">
+                    <ClipboardList className="h-10 w-10 text-slate-300 mx-auto mb-3" />
+                    <p className="text-sm font-medium text-slate-600">No bookings yet</p>
+                    <p className="text-xs text-slate-500 mt-1">Schedule your first service visit today!</p>
                   </div>
                 ) : (
-                  bookings.slice(0, 6).map((booking) => (
-                    <div key={booking._id} className="rounded-2xl border bg-slate-50/70 p-4">
-                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <div>
+                  bookings.slice(0, 6).map((booking, idx) => (
+                    <div 
+                      key={booking._id} 
+                      className="rounded-xl border border-slate-200 bg-gradient-to-r from-slate-50/50 to-white p-4 hover:shadow-md transition-all duration-200 hover:border-primary/30 animate-in fade-in"
+                      style={{ animationDelay: `${idx * 50}ms` }}
+                    >
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex-1">
                           <p className="text-sm font-semibold capitalize text-slate-900">{booking.serviceType}</p>
-                          <p className="mt-1 text-sm text-slate-600">{booking.issueType}</p>
-                          <p className="mt-2 text-xs text-slate-500">
-                            {new Date(booking.preferredDate).toLocaleDateString("en-IN")} at {booking.preferredTime}
+                          <p className="text-sm text-slate-600 mt-1">{booking.issueType}</p>
+                          <p className="text-xs text-slate-500 mt-2">
+                            📅 {new Date(booking.preferredDate).toLocaleDateString("en-IN")} • ⏰ {booking.preferredTime}
                           </p>
                         </div>
-                        <Badge className={`border ${statusStyles[booking.status] || "bg-slate-100 text-slate-700 border-slate-200"}`}>
-                          {booking.status}
+                        <Badge className={`border font-semibold ${statusStyles[booking.status] || "bg-slate-100 text-slate-700 border-slate-200"}`}>
+                          {booking.status.toUpperCase()}
                         </Badge>
                       </div>
                     </div>
@@ -140,58 +186,68 @@ export default function CustomerDashboardV2() {
             </CardContent>
           </Card>
 
+          {/* Right Sidebar */}
           <div className="space-y-6">
-            <Card className="rounded-[28px] border-0 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.5)]">
-              <CardHeader className="p-6">
-                <CardTitle className="text-xl">Account details</CardTitle>
+            {/* Account Details */}
+            <Card className="rounded-2xl border-0 shadow-lg overflow-hidden">
+              <CardHeader className="p-6 bg-gradient-to-r from-slate-50 to-slate-100/50 border-b">
+                <CardTitle className="text-lg font-bold text-slate-900">Account Details</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4 px-6 pb-6 text-sm">
-                <div>
-                  <p className="text-slate-500">Name</p>
-                  <p className="mt-1 font-semibold text-slate-900">{user?.name}</p>
+              <CardContent className="p-6 space-y-4">
+                <div className="pb-4 border-b border-slate-100">
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Name</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">{user?.name}</p>
+                </div>
+                <div className="pb-4 border-b border-slate-100">
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Email</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900 break-all">{user?.email}</p>
                 </div>
                 <div>
-                  <p className="text-slate-500">Email</p>
-                  <p className="mt-1 font-semibold text-slate-900">{user?.email}</p>
-                </div>
-                <div>
-                  <p className="text-slate-500">Phone</p>
-                  <p className="mt-1 font-semibold text-slate-900">{user?.phone}</p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.1em] text-slate-500">Phone</p>
+                  <p className="mt-2 text-sm font-semibold text-slate-900">{user?.phone}</p>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="rounded-[28px] border-0 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.5)]">
-              <CardHeader className="p-6">
-                <CardTitle className="text-xl">Invoice history</CardTitle>
+            {/* Invoice History */}
+            <Card className="rounded-2xl border-0 shadow-lg overflow-hidden">
+              <CardHeader className="p-6 bg-gradient-to-r from-slate-50 to-slate-100/50 border-b">
+                <CardTitle className="text-lg font-bold text-slate-900">Invoices</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3 px-6 pb-6">
-                {invoices.length === 0 ? (
-                  <p className="rounded-2xl border border-dashed p-5 text-sm text-slate-500">
-                    Invoices will appear here once the admin generates them.
-                  </p>
-                ) : (
-                  invoices.slice(0, 5).map((invoice) => (
-                    <Link
-                      key={invoice._id}
-                      to={`/invoice/${invoice._id}`}
-                      className="flex items-center justify-between rounded-2xl border bg-slate-50/70 p-4 transition hover:border-primary/30 hover:bg-white"
-                    >
-                      <div>
-                        <p className="text-sm font-semibold text-slate-900">{invoice.invoiceId}</p>
-                        <p className="mt-1 text-xs text-slate-500">
-                          {new Date(invoice.date).toLocaleDateString("en-IN")}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-semibold text-slate-900">
-                          Rs. {invoice.totalAmount?.toLocaleString("en-IN")}
-                        </span>
-                        <ArrowRight className="h-4 w-4 text-slate-400" />
-                      </div>
-                    </Link>
-                  ))
-                )}
+              <CardContent className="p-6">
+                <div className="space-y-2">
+                  {invoices.length === 0 ? (
+                    <div className="rounded-xl border-2 border-dashed border-slate-200 p-6 text-center">
+                      <File className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+                      <p className="text-sm font-medium text-slate-600">No invoices yet</p>
+                      <p className="text-xs text-slate-500 mt-1">Your invoices will appear here</p>
+                    </div>
+                  ) : (
+                    invoices.slice(0, 5).map((invoice, idx) => (
+                      <Link
+                        key={invoice._id}
+                        to={`/invoice/${invoice._id}`}
+                        className="flex items-center justify-between rounded-xl border border-slate-200 bg-gradient-to-r from-slate-50/50 to-white p-3 transition-all duration-200 hover:shadow-md hover:border-primary/30 hover:from-primary/5 group animate-in fade-in"
+                        style={{ animationDelay: `${100 + idx * 50}ms` }}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-slate-900 truncate group-hover:text-primary transition-colors">
+                            {invoice.invoiceId}
+                          </p>
+                          <p className="text-xs text-slate-500 mt-0.5">
+                            {new Date(invoice.date).toLocaleDateString("en-IN")}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 ml-2">
+                          <span className="text-sm font-bold text-primary whitespace-nowrap">
+                            ₹{invoice.totalAmount?.toLocaleString("en-IN")}
+                          </span>
+                          <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                        </div>
+                      </Link>
+                    ))
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>

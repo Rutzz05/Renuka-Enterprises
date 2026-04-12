@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, Phone } from "lucide-react";
+import { productsAPI } from "@/services/api";
 
 const PHONE = "+919876543210";
 
@@ -20,29 +21,27 @@ export default function ProductsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await fetch("http://localhost:5000/api/products");
-        
-        if (!response.ok) {
-          throw new Error(`Failed to fetch: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        setProducts(Array.isArray(data) ? data : []);
-      } catch (err) {
-        console.error('Error fetching products:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load products');
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-    fetchProducts();
-  }, []);
+      const res = await productsAPI.getAllProducts();
+      console.log("Products API:", res.data); // debug
+
+      setProducts(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error('Error fetching products:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load products');
+      setProducts([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, []);
+
 
   return (
     <>

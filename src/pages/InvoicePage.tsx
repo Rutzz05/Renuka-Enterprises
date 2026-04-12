@@ -190,8 +190,8 @@ const InvoicePage = () => {
                   <div key={index} className={`grid grid-cols-12 gap-4 px-5 py-4 text-sm ${index % 2 === 0 ? '' : 'bg-muted/20'} ${index < invoice.items.length - 1 ? 'border-b' : ''}`}>
                     <div className="col-span-5 font-medium">{item.description || item.name}</div>
                     <div className="col-span-2 text-center text-muted-foreground">{item.quantity}</div>
-                    <div className="col-span-2 text-right text-muted-foreground">₹{(item.unitPrice || item.price)?.toLocaleString()}</div>
-                    <div className="col-span-3 text-right font-semibold">₹{item.total?.toLocaleString()}</div>
+                    <div className="col-span-2 text-right text-muted-foreground">₹{((item.unitPrice || item.price) || 0).toLocaleString()}</div>
+                    <div className="col-span-3 text-right font-semibold">₹{(item.total || 0).toLocaleString()}</div>
                   </div>
                 ))}
               </div>

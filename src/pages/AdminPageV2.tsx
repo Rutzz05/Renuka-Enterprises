@@ -175,6 +175,16 @@ export default function AdminPageV2() {
     startBusy("invoice-form");
 
     try {
+      // Validate that all items have description and unitPrice > 0
+      const invalidItems = invoiceForm.items.filter(
+        (item) => !item.description.trim() || Number(item.unitPrice || 0) <= 0
+      );
+      if (invalidItems.length > 0) {
+        alert("Please fill all item descriptions and ensure unit prices are greater than 0");
+        stopBusy();
+        return;
+      }
+
       await invoicesAPI.createInvoice({
         customerId: invoiceForm.customerId,
         bookingId: invoiceForm.bookingId || null,

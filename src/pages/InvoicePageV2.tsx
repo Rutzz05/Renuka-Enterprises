@@ -128,8 +128,8 @@ export default function InvoicePageV2() {
                 <div key={`${item.description}-${index}`} className="grid grid-cols-12 border-t px-5 py-4 text-sm">
                   <div className="col-span-6 font-medium text-slate-900">{item.description}</div>
                   <div className="col-span-2 text-center text-slate-600">{item.quantity}</div>
-                  <div className="col-span-2 text-right text-slate-600">Rs. {item.unitPrice.toLocaleString("en-IN")}</div>
-                  <div className="col-span-2 text-right font-semibold text-slate-900">Rs. {item.total.toLocaleString("en-IN")}</div>
+                  <div className="col-span-2 text-right text-slate-600">Rs. {(item.unitPrice || 0).toLocaleString("en-IN")}</div>
+                  <div className="col-span-2 text-right font-semibold text-slate-900">Rs. {(item.total || 0).toLocaleString("en-IN")}</div>
                 </div>
               ))}
             </div>

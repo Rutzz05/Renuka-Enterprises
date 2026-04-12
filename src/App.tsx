@@ -14,9 +14,9 @@ import NotFound from "./pages/NotFound";
 import SelectLoginType from "./pages/SelectLoginType";
 import CustomerLogin from "./pages/CustomerLogin";
 import AdminLogin from "./pages/AdminLogin";
-import CustomerDashboard from "./pages/CustomerDashboard";
+import CustomerDashboardV2 from "./pages/CustomerDashboardV2";
 import BookingPage from "./pages/BookingPage";
-import InvoicePage from "./pages/InvoicePage";
+import InvoicePageV2 from "./pages/InvoicePageV2";
 import ProtectedRoute from "./components/ProtectedRoute";
 import RegisterPage from "./pages/RegisterPage";
 
@@ -40,10 +40,10 @@ const App = () => (
               <Route path="/login/customer" element={<CustomerLogin />} />
               <Route path="/login/admin" element={<AdminLogin />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/dashboard" element={<ProtectedRoute><CustomerDashboard /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><CustomerDashboardV2 /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute role="admin"><AdminPageV2 /></ProtectedRoute>} />
               <Route path="/booking" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
-              <Route path="/invoice/:id" element={<ProtectedRoute><InvoicePage /></ProtectedRoute>} />
+              <Route path="/invoice/:id" element={<ProtectedRoute><InvoicePageV2 /></ProtectedRoute>} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>

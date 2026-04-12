@@ -37,7 +37,7 @@ export default function ContactPage() {
                   <Phone className="w-5 h-5 text-primary mt-0.5" />
                   <div>
                     <p className="font-semibold">Phone</p>
-                    <a href={`tel:${PHONE}`} className="text-primary hover:underline">+91 98765 43210</a>
+                    <a href={`tel:${PHONE}`} className="text-primary hover:underline">+91 98230 21804</a>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
@@ -45,7 +45,7 @@ export default function ContactPage() {
                   <div>
                     <p className="font-semibold">WhatsApp</p>
                     <a
-                      href={`https://wa.me/919876543210`}
+                      href={`https://wa.me/919823021804`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-whatsapp hover:underline"

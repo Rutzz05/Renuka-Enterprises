@@ -44,7 +44,7 @@ export default function Chatbot() {
             <Button variant="outline" onClick={handleBookNow} className="justify-start">
               Book a Service
             </Button>
-            <Button variant="ghost" onClick={() => { window.open('https://wa.me/919876543210', '_blank'); }} className="justify-start">
+            <Button variant="ghost" onClick={() => { window.open('https://wa.me/919823021804', '_blank'); }} className="justify-start">
               Chat on WhatsApp
             </Button>
             <Button variant="ghost" onClick={() => { window.location.href = '/contact'; }} className="justify-start">

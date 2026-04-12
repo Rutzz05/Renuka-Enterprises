@@ -1,7 +1,7 @@
 import { Droplets, Zap, Phone, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const PHONE = "+919876543210";
+const PHONE = "+919823021804";
 
 const aquaguardServices = [
   "New Aquaguard Sales & Consultation",

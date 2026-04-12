@@ -3,7 +3,7 @@ import { Phone, ShieldCheck, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { productsAPI } from "@/services/api";
 
-const PHONE = "+919876543210";
+const PHONE = "+919823021804";
 
 type Product = {
   _id: string;

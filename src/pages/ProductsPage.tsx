@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Phone, Package, AlertCircle } from "lucide-react";
 import { productsAPI } from "@/services/api";
 
-const PHONE = "+919876543210";
+const PHONE = "+919823021804";
 
 type Product = {
   _id: string;

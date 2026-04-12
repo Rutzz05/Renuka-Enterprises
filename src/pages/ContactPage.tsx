@@ -1,7 +1,7 @@
 import { Phone, MapPin, MessageCircle } from "lucide-react";
 import ServiceBookingFormV2 from "@/components/ServiceBookingFormV2";
 
-const PHONE = "+919876543210";
+const PHONE = "+919823021804";
 
 export default function ContactPage() {
 

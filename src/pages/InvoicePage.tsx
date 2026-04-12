@@ -210,7 +210,7 @@ const InvoicePage = () => {
             {/* Footer */}
             <div className="text-center text-sm text-muted-foreground space-y-1">
               <p className="font-medium">Thank you for choosing Renuka Enterprises!</p>
-              <p className="text-xs">For any queries, contact us at +91 98765 43210</p>
+              <p className="text-xs">For any queries, contact us at +91 9823021804</p>
             </div>
           </CardContent>
         </Card>

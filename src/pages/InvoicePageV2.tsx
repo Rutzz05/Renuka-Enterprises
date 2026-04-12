@@ -213,7 +213,7 @@ export default function InvoicePageV2() {
             <div className="mt-8 rounded-3xl border border-emerald-200 bg-emerald-50/50 p-6 text-center">
               <CheckCircle2 className="h-5 w-5 text-emerald-600 mx-auto mb-2" />
               <p className="text-sm font-semibold text-emerald-900">Thank you for your business!</p>
-              <p className="mt-1 text-xs text-emerald-700">Contact us at +91 98765 43210 for any queries</p>
+              <p className="mt-1 text-xs text-emerald-700">Contact us at +91 9823021804 for any queries</p>
             </div>
           </CardContent>
         </Card>

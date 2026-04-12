@@ -3,7 +3,7 @@ import { Phone, Droplets, Zap, ShieldCheck, Star, Clock, Wrench } from "lucide-r
 import { Button } from "@/components/ui/button";
 import { useAuth } from "../contexts/AuthContext";
 
-const PHONE = "+919876543210";
+const PHONE = "+919823021804";
 
 const highlights = [
   { icon: Clock, title: "10+ Years", desc: "Of trusted service in Nashik" },

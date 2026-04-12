@@ -23,7 +23,7 @@ export default function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-background mb-3 uppercase tracking-wide">Contact</h4>
           <ul className="space-y-2 text-sm">
-            <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> +91 98765 43210</li>
+            <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> +91 9823021804</li>
             <li className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Nashik, Maharashtra</li>
             <li className="flex items-center gap-2"><Clock className="w-4 h-4" /> Mon–Sat, 9 AM – 7 PM</li>
           </ul>

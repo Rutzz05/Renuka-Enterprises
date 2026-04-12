@@ -72,7 +72,7 @@ const createInvoiceHTML = (invoice: InvoiceData): string => {
           <div style="font-size: 32px; font-weight: bold; color: #0ea5e9; margin-bottom: 5px;">R</div>
           <h1 style="margin: 0; font-size: 28px; font-weight: 700; color: #111827;">Renuka Enterprises</h1>
           <p style="margin: 5px 0; color: #6b7280; font-size: 12px;">Aquaguard & Inverter Services</p>
-          <p style="margin: 3px 0; color: #6b7280; font-size: 12px;">Nashik, India | Phone: +91 98765 43210</p>
+          <p style="margin: 3px 0; color: #6b7280; font-size: 12px;">Nashik, India | Phone: +91 9823021804</p>
         </div>
         <div style="text-align: right;">
           <div style="font-size: 48px; font-weight: 300; color: #0ea5e9; letter-spacing: 1px;">INVOICE</div>
@@ -176,7 +176,7 @@ const createInvoiceHTML = (invoice: InvoiceData): string => {
           Thank you for choosing Renuka Enterprises!
         </p>
         <p style="margin: 5px 0; color: #6b7280; font-size: 11px;">
-          For queries, contact us at +91 98765 43210 or email us
+          For queries, contact us at +91 9823021804 or email us
         </p>
         <p style="margin: 15px 0 0 0; color: #9ca3af; font-size: 10px; border-top: 1px solid #e5e7eb; padding-top: 10px;">
           This is a computer-generated document. No signature is required.

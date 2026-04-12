@@ -11,7 +11,7 @@ const navLinks = [
   { label: "Contact", to: "/contact" },
 ];
 
-const PHONE = "+919876543210";
+const PHONE = "+919823021804";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);

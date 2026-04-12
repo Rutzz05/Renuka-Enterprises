@@ -83,25 +83,25 @@ export default function CustomerDashboardV2() {
   return (
     <div className="min-h-screen bg-[linear-gradient(180deg,#f4f8fb_0%,#ffffff_50%,#eff7f3_100%)]">
       {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[var(--hero-gradient)] opacity-95" />
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -mr-48 -mt-48" />
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/5 rounded-full -ml-48 -mb-48" />
+      <section className="hero relative overflow-hidden" style={{ background: "var(--hero-gradient)" }}>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/10" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary-foreground/5 rounded-full -mr-48 -mt-48" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-primary-foreground/5 rounded-full -ml-48 -mb-48" />
         
-        <div className="relative container py-16 text-white">
+        <div className="relative container py-16 text-primary-foreground z-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/65">Welcome Back</p>
+              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-primary-foreground/70">Welcome Back</p>
               <h1 className="mt-4 text-4xl font-bold md:text-5xl lg:text-6xl leading-tight">
                 Hi, {user?.name}! 👋
               </h1>
-              <p className="mt-4 max-w-2xl text-base text-white/75 md:text-lg">
+              <p className="mt-4 max-w-2xl text-base text-primary-foreground/85 md:text-lg">
                 Manage your service bookings, track invoices, and schedule maintenance from your personal dashboard.
               </p>
             </div>
             <Button
               onClick={logout}
-              className="border-white/25 bg-white/10 text-white hover:bg-white/20 rounded-xl font-semibold transition-all hover:scale-105"
+              className="border-primary-foreground/25 bg-primary-foreground/10 text-primary-foreground hover:bg-primary-foreground/20 rounded-xl font-semibold transition-all hover:scale-105"
             >
               <LogOut className="mr-2 h-4 w-4" />
               Logout

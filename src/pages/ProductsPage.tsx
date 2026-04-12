@@ -59,8 +59,8 @@ export default function ProductsPage() {
   return (
     <>
       <section className="hero relative overflow-hidden" style={{ background: "var(--hero-gradient)" }}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/10" />
-        <div className="container relative text-center text-primary-foreground py-16 md:py-20">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/5" />
+        <div className="container relative text-center text-primary-foreground py-16 md:py-20 z-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 leading-tight">Our Premium Products</h1>
           <p className="opacity-90 max-w-2xl mx-auto text-lg md:text-xl">
             Explore our comprehensive range of Aquaguard water purifiers and advanced inverter solutions for your home and business

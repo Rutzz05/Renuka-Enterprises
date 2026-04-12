@@ -7,10 +7,11 @@ export default function ContactPage() {
 
   return (
     <>
-      <section className="hero" style={{ background: "var(--hero-gradient)" }}>
-        <div className="container text-center text-primary-foreground">
+      <section className="hero relative overflow-hidden" style={{ background: "var(--hero-gradient)" }}>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-black/5" />
+        <div className="container relative text-center text-primary-foreground z-10 py-12 md:py-16">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-3">Contact Us</h1>
-          <p className="opacity-90 max-w-lg mx-auto">
+          <p className="opacity-95 max-w-lg mx-auto text-lg">
             Reach out for service requests, queries, or product enquiries.
           </p>
         </div>

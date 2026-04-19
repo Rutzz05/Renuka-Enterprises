@@ -4,6 +4,7 @@ const User = require('../models/User');
 const { auth, optionalAuth, adminAuth } = require('../middleware/auth');
 
 const router = express.Router();
+const customerEditableStatuses = ['pending', 'in-progress'];
 
 router.post('/', optionalAuth, async (req, res) => {
   try {
@@ -62,6 +63,58 @@ router.get('/my', auth, async (req, res) => {
   } catch (err) {
     console.error(err.message);
     return res.status(500).json({ message: 'Unable to fetch your bookings' });
+  }
+});
+
+router.patch('/:id/customer', auth, async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    if (!booking.customer || booking.customer.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'You do not have access to this booking' });
+    }
+
+    if (!customerEditableStatuses.includes(booking.status)) {
+      return res.status(400).json({ message: 'This booking can no longer be changed by the customer' });
+    }
+
+    const updates = {};
+
+    if (req.body.action === 'cancel') {
+      updates.status = 'cancelled';
+    }
+
+    if (req.body.action === 'reschedule') {
+      const { preferredDate, preferredTime, notes } = req.body;
+
+      if (!preferredDate || !preferredTime) {
+        return res.status(400).json({ message: 'Preferred date and time are required to reschedule' });
+      }
+
+      updates.preferredDate = preferredDate;
+      updates.preferredTime = preferredTime.trim();
+      if (typeof notes === 'string') {
+        updates.notes = notes.trim();
+      }
+    }
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).json({ message: 'No valid customer update was provided' });
+    }
+
+    const updatedBooking = await Booking.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    return res.json(updatedBooking);
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ message: 'Unable to update booking' });
   }
 });
 

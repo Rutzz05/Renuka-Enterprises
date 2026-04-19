@@ -86,7 +86,7 @@ const AdminLogin = () => {
           <div className="mt-4 text-center">
             <p>
               <Link to="/" className="text-muted-foreground hover:underline">
-                ← Back to home
+                Back to home
               </Link>
             </p>
           </div>

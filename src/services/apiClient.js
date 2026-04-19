@@ -2,8 +2,6 @@ import axios from 'axios';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 
-console.log('🔌 API Base URL:', API_BASE_URL);
-
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -21,16 +19,13 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Add response error interceptor for debugging
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('❌ API Error:', {
-      url: error.config?.url,
-      status: error.response?.status,
-      data: error.response?.data,
-      message: error.message,
-    });
+    if (error.response?.status === 401 && error.config?.url?.includes('/auth/me')) {
+      localStorage.removeItem('token');
+    }
+
     return Promise.reject(error);
   }
 );
@@ -48,6 +43,7 @@ export const bookingsAPI = {
   getAllBookings: () => api.get('/bookings'),
   updateBooking: (id, data) => api.put(`/bookings/${id}`, data),
   deleteBooking: (id) => api.delete(`/bookings/${id}`),
+  updateMyBooking: (id, data) => api.patch(`/bookings/${id}/customer`, data),
 };
 
 export const productsAPI = {

@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Phone, ShieldCheck, Sparkles } from "lucide-react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
-import { productsAPI } from "@/services/api";
+import { productsAPI } from "@/services/apiClient";
 
 const PHONE = "+919823021804";
 
@@ -23,9 +25,9 @@ export default function ProductsPageV2() {
     const fetchProducts = async () => {
       try {
         const response = await productsAPI.getAllProducts();
-        setProducts(response.data);
-      } catch (error) {
-        console.error("Failed to fetch products", error);
+        setProducts(response.data || []);
+      } catch (_error) {
+        toast.error("We could not load products right now.");
       } finally {
         setLoading(false);
       }
@@ -68,6 +70,13 @@ export default function ProductsPageV2() {
               {Array.from({ length: 6 }).map((_, index) => (
                 <div key={index} className="h-80 animate-pulse rounded-[28px] border bg-white/70" />
               ))}
+            </div>
+          ) : products.length === 0 ? (
+            <div className="rounded-[28px] border border-dashed bg-white px-6 py-14 text-center shadow-sm">
+              <p className="text-lg font-semibold text-slate-900">No products available right now</p>
+              <p className="mt-2 text-sm text-slate-500">
+                Please check back shortly or call us for the latest stock details.
+              </p>
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">

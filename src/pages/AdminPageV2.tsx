@@ -1,13 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Boxes, ClipboardList, FileText, Loader2, LogOut, Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/contexts/AuthContext";
-import { authAPI, bookingsAPI, invoicesAPI, productsAPI } from "@/services/api";
+import { authAPI, bookingsAPI, invoicesAPI, productsAPI } from "@/services/apiClient";
 
 const bookingStatuses = ["pending", "in-progress", "completed"];
 const dashboardTabs = ["bookings", "products", "invoices"] as const;
@@ -67,8 +68,8 @@ export default function AdminPageV2() {
       setProducts(productsResponse.data);
       setInvoices(invoicesResponse.data);
       setCustomers(customersResponse.data);
-    } catch (error) {
-      console.error("Failed to load admin dashboard", error);
+    } catch (_error) {
+      toast.error("We could not load the admin dashboard.");
     } finally {
       setLoading(false);
     }
@@ -126,9 +127,10 @@ export default function AdminPageV2() {
       }
 
       setProductForm(emptyProductForm);
+      toast.success(productForm.id ? "Product updated successfully." : "Product created successfully.");
       await loadDashboard();
-    } catch (error) {
-      console.error("Product save failed", error);
+    } catch (_error) {
+      toast.error("Unable to save product details.");
     } finally {
       stopBusy();
     }
@@ -138,9 +140,10 @@ export default function AdminPageV2() {
     startBusy(`delete-product-${productId}`);
     try {
       await productsAPI.deleteProduct(productId);
+      toast.success("Product deleted successfully.");
       await loadDashboard();
-    } catch (error) {
-      console.error("Failed to delete product", error);
+    } catch (_error) {
+      toast.error("Unable to delete this product.");
     } finally {
       stopBusy();
     }
@@ -150,9 +153,10 @@ export default function AdminPageV2() {
     startBusy(`booking-${bookingId}`);
     try {
       await bookingsAPI.updateBooking(bookingId, { status });
+      toast.success("Booking status updated.");
       await loadDashboard();
-    } catch (error) {
-      console.error("Failed to update booking", error);
+    } catch (_error) {
+      toast.error("Unable to update booking status.");
     } finally {
       stopBusy();
     }
@@ -162,9 +166,10 @@ export default function AdminPageV2() {
     startBusy(`delete-booking-${bookingId}`);
     try {
       await bookingsAPI.deleteBooking(bookingId);
+      toast.success("Booking deleted successfully.");
       await loadDashboard();
-    } catch (error) {
-      console.error("Failed to delete booking", error);
+    } catch (_error) {
+      toast.error("Unable to delete this booking.");
     } finally {
       stopBusy();
     }
@@ -180,7 +185,7 @@ export default function AdminPageV2() {
         (item) => !item.description.trim() || Number(item.unitPrice || 0) <= 0
       );
       if (invalidItems.length > 0) {
-        alert("Please fill all item descriptions and ensure unit prices are greater than 0");
+        toast.error("Please complete each item and keep unit prices above 0.");
         stopBusy();
         return;
       }
@@ -210,9 +215,10 @@ export default function AdminPageV2() {
         status: "generated",
         items: [createEmptyInvoiceItem()],
       });
+      toast.success("Invoice created successfully.");
       await loadDashboard();
-    } catch (error) {
-      console.error("Failed to create invoice", error);
+    } catch (_error) {
+      toast.error("Unable to create invoice.");
     } finally {
       stopBusy();
     }
@@ -222,9 +228,10 @@ export default function AdminPageV2() {
     startBusy(`invoice-${invoiceId}`);
     try {
       await invoicesAPI.updateInvoiceStatus(invoiceId, { status });
+      toast.success("Invoice status updated.");
       await loadDashboard();
-    } catch (error) {
-      console.error("Failed to update invoice", error);
+    } catch (_error) {
+      toast.error("Unable to update invoice status.");
     } finally {
       stopBusy();
     }
@@ -253,6 +260,7 @@ export default function AdminPageV2() {
               <p className="mt-3 max-w-2xl text-base text-white/75 md:text-lg">
                 Review bookings, maintain inventory, and generate invoices from one responsive dashboard.
               </p>
+              <p className="mt-3 text-sm text-white/70">Welcome, {user?.name || "Admin"}.</p>
             </div>
             <div className="flex gap-3">
               <Link to="/products">
@@ -296,12 +304,12 @@ export default function AdminPageV2() {
         <div className="mt-8 flex flex-wrap gap-3">
           <Link to="/">
             <Button variant="outline" className="gap-2 !bg-slate-100 text-slate-700 hover:!bg-slate-200">
-              ← Back to Home
+              Back to Home
             </Button>
           </Link>
           <Link to="/products">
             <Button variant="outline" className="gap-2 !bg-blue-50 text-blue-700 hover:!bg-blue-100 border-blue-200">
-              📦 View Site Products
+              View Site Products
             </Button>
           </Link>
           {dashboardTabs.map((tab) => (
@@ -424,7 +432,7 @@ export default function AdminPageV2() {
                         </div>
                         <p className="mt-2 text-sm text-slate-600">{product.description}</p>
                         <p className="mt-3 text-sm font-semibold text-slate-900">
-                          Rs. {product.price.toLocaleString("en-IN")} · {product.stock} in stock
+                          Rs. {product.price.toLocaleString("en-IN")} - {product.stock} in stock
                         </p>
                       </div>
                     </div>
@@ -477,7 +485,7 @@ export default function AdminPageV2() {
                     <option value="">Select customer</option>
                     {customers.map((customer) => (
                       <option key={customer.id} value={customer.id}>
-                        {customer.name} · {customer.phone}
+                        {customer.name} - {customer.phone}
                       </option>
                     ))}
                   </select>
@@ -490,7 +498,7 @@ export default function AdminPageV2() {
                     <option value="">Link booking (optional)</option>
                     {bookingOptionsForCustomer.map((booking) => (
                       <option key={booking._id} value={booking._id}>
-                        {booking.issueType} · {new Date(booking.preferredDate).toLocaleDateString("en-IN")}
+                        {booking.issueType} - {new Date(booking.preferredDate).toLocaleDateString("en-IN")}
                       </option>
                     ))}
                   </select>
@@ -612,7 +620,7 @@ export default function AdminPageV2() {
                           {invoice.status}
                         </Badge>
                       </div>
-                      <p className="mt-2 text-sm text-slate-600">{invoice.customer?.name} · {invoice.customer?.phone}</p>
+                      <p className="mt-2 text-sm text-slate-600">{invoice.customer?.name} - {invoice.customer?.phone}</p>
                       <p className="mt-1 text-sm font-semibold text-slate-900">
                         Rs. {invoice.totalAmount.toLocaleString("en-IN")}
                       </p>

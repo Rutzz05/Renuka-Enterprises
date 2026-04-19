@@ -120,7 +120,7 @@ export default function HomePage() {
         </p>
         <a href={`tel:${PHONE}`}>
           <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg">
-            <Phone className="w-5 h-5" /> +91 9823021804
+            <Phone className="w-5 h-5" /> +91 98230 21804
           </Button>
         </a>
       </section>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2, Phone, Package, AlertCircle } from "lucide-react";
-import { productsAPI } from "@/services/api";
+import { productsAPI } from "@/services/apiClient";
 
 const PHONE = "+919823021804";
 

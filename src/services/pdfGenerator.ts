@@ -11,10 +11,10 @@ interface InvoiceData {
   invoiceId: string;
   date: string;
   status: string;
-  customer: {
-    name: string;
-    email: string;
-    phone: string;
+  customer?: {
+    name?: string;
+    email?: string;
+    phone?: string;
   };
   items: InvoiceItem[];
   subtotal: number;
@@ -27,21 +27,16 @@ export const generateInvoicePDF = async (invoice: InvoiceData) => {
   const element = document.createElement('div');
   element.innerHTML = createInvoiceHTML(invoice);
 
-  const opt = {
-    margin: 10,
-    filename: `Invoice_${invoice.invoiceId}_${new Date().toISOString().split('T')[0]}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true },
-    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
-  };
-
-  try {
-    await html2pdf().set(opt).from(element).save();
-    return true;
-  } catch (error) {
-    console.error('Failed to generate PDF:', error);
-    throw error;
-  }
+  await html2pdf()
+    .set({
+      margin: 10,
+      filename: `Invoice_${invoice.invoiceId}_${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' },
+    })
+    .from(element)
+    .save();
 };
 
 const createInvoiceHTML = (invoice: InvoiceData): string => {
@@ -49,7 +44,7 @@ const createInvoiceHTML = (invoice: InvoiceData): string => {
     return new Intl.NumberFormat('en-IN', {
       style: 'currency',
       currency: 'INR',
-      minimumFractionDigits: 0,
+      minimumFractionDigits: 2,
     }).format(value);
   };
 
@@ -109,9 +104,9 @@ const createInvoiceHTML = (invoice: InvoiceData): string => {
           <div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; border-left: 4px solid #10b981;">
             <p style="margin: 0; font-size: 11px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Bill To</p>
             <div style="line-height: 1.8; font-size: 13px;">
-              <p style="margin: 5px 0; font-weight: 600; color: #111827;">${invoice.customer.name}</p>
-              <p style="margin: 5px 0; color: #6b7280;">${invoice.customer.email}</p>
-              <p style="margin: 5px 0; color: #6b7280;">${invoice.customer.phone}</p>
+              <p style="margin: 5px 0; font-weight: 600; color: #111827;">${invoice.customer?.name || 'Customer'}</p>
+              <p style="margin: 5px 0; color: #6b7280;">${invoice.customer?.email || 'No email available'}</p>
+              <p style="margin: 5px 0; color: #6b7280;">${invoice.customer?.phone || 'No phone available'}</p>
             </div>
           </div>
         </div>
@@ -133,8 +128,8 @@ const createInvoiceHTML = (invoice: InvoiceData): string => {
               <tr style="border-bottom: 1px solid #e5e7eb; background-color: ${index % 2 === 0 ? '#ffffff' : '#f9fafb'};">
                 <td style="padding: 12px; font-size: 13px; color: #111827; font-weight: 500;">${item.description}</td>
                 <td style="padding: 12px; text-align: center; font-size: 13px; color: #6b7280;">${item.quantity}</td>
-                <td style="padding: 12px; text-align: right; font-size: 13px; color: #6b7280;">₹${item.unitPrice.toLocaleString('en-IN')}</td>
-                <td style="padding: 12px; text-align: right; font-size: 13px; font-weight: 600; color: #111827;">₹${item.total.toLocaleString('en-IN')}</td>
+                <td style="padding: 12px; text-align: right; font-size: 13px; color: #6b7280;">${formatCurrency(item.unitPrice)}</td>
+                <td style="padding: 12px; text-align: right; font-size: 13px; font-weight: 600; color: #111827;">${formatCurrency(item.total)}</td>
               </tr>
             `).join('')}
           </tbody>
@@ -146,15 +141,15 @@ const createInvoiceHTML = (invoice: InvoiceData): string => {
         <div style="width: 300px; background-color: #f0f9ff; padding: 20px; border-radius: 8px; border: 2px solid #0ea5e9;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #bfdbfe;">
             <span style="color: #6b7280; font-size: 13px;">Subtotal</span>
-            <span style="color: #111827; font-weight: 600; font-size: 13px;">₹${invoice.subtotal.toLocaleString('en-IN')}</span>
+            <span style="color: #111827; font-weight: 600; font-size: 13px;">${formatCurrency(invoice.subtotal)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid #bfdbfe;">
             <span style="color: #6b7280; font-size: 13px;">Tax (18%)</span>
-            <span style="color: #111827; font-weight: 600; font-size: 13px;">₹${invoice.tax.toLocaleString('en-IN')}</span>
+            <span style="color: #111827; font-weight: 600; font-size: 13px;">${formatCurrency(invoice.tax)}</span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span style="font-weight: 700; font-size: 14px; color: #0ea5e9; text-transform: uppercase; letter-spacing: 0.5px;">Total Amount</span>
-            <span style="font-weight: 700; font-size: 18px; color: #0ea5e9;">₹${invoice.totalAmount.toLocaleString('en-IN')}</span>
+            <span style="font-weight: 700; font-size: 18px; color: #0ea5e9;">${formatCurrency(invoice.totalAmount)}</span>
           </div>
         </div>
       </div>

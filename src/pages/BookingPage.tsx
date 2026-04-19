@@ -1,6 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeft, CalendarDays, Wrench } from 'lucide-react';
-import ServiceBookingFormV2 from '@/components/ServiceBookingFormV2';
+import ServiceBookingFormV3 from '@/components/ServiceBookingFormV3';
 import { useAuth } from '@/contexts/AuthContext';
 
 const BookingPage = () => {
@@ -51,7 +51,7 @@ const BookingPage = () => {
       </section>
 
       <section className="container -mt-8 relative z-10 pb-14">
-        <ServiceBookingFormV2
+        <ServiceBookingFormV3
           source="dashboard"
           initialValues={{
             name: user?.name || '',

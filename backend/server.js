@@ -12,15 +12,28 @@ const allowedOrigins = (process.env.CLIENT_URLS || 'http://localhost:8080,http:/
   .map((origin) => origin.trim())
   .filter(Boolean);
 
+const originMatchers = allowedOrigins.map((pattern) => {
+  if (!pattern.includes('*')) {
+    return { pattern, regex: null };
+  }
+
+  const escapedPattern = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
+  return { pattern, regex: new RegExp(`^${escapedPattern}$`) };
+});
+
+const isOriginAllowed = (origin) =>
+  originMatchers.some(({ pattern, regex }) => (regex ? regex.test(origin) : pattern === origin));
+
 app.use(
   cors({
     origin(origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin || isOriginAllowed(origin)) {
         return callback(null, true);
       }
 
       return callback(new Error('Origin not allowed by CORS'));
     },
+    credentials: true,
   })
 );
 app.use(express.json({ limit: '1mb' }));

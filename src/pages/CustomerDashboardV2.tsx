@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
-import { bookingsAPI, invoicesAPI } from "@/services/api";
+import { bookingsAPI, invoicesAPI } from "@/services/apiClient";
 
 const statusStyles: Record<string, string> = {
   pending: "bg-amber-50 text-amber-700 border-amber-200",

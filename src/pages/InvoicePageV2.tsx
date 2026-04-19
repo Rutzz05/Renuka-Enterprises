@@ -4,7 +4,7 @@ import { ArrowLeft, Download, FileText, Loader2, Printer, CheckCircle2 } from "l
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { invoicesAPI } from "@/services/api";
+import { invoicesAPI } from "@/services/apiClient";
 import { generateInvoicePDF } from "@/services/pdfGenerator";
 
 export default function InvoicePageV2() {

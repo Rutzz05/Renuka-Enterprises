@@ -139,21 +139,31 @@ export default function InvoiceDocument({
         <table className="w-full border-b border-black text-[10px]">
           <thead>
             <tr className="bg-gray-100">
-              <th className="border px-1">S.No</th>
-              <th className="border px-1 text-left">Product Description</th>
-              <th className="border px-1">HSN</th>
-              <th className="border px-1">Qty</th>
-              <th className="border px-1">Rate</th>
+              <th className="border px-1" rowSpan={2}>S.No</th>
+              <th className="border px-1 text-left" rowSpan={2}>Product Description</th>
+              <th className="border px-1" rowSpan={2}>HSN</th>
+              <th className="border px-1" rowSpan={2}>Qty</th>
+              <th className="border px-1" rowSpan={2}>Rate</th>
+              <th className="border px-1" rowSpan={2}>Amount</th>
+              <th className="border px-1 text-center" colSpan={2}>CGST</th>
+              <th className="border px-1 text-center" colSpan={2}>SGST</th>
+              <th className="border px-1" rowSpan={2}>Total</th>
+            </tr>
+            <tr className="bg-gray-100">
+              <th className="border px-1">Rate %</th>
               <th className="border px-1">Amount</th>
-              <th className="border px-1">CGST</th>
-              <th className="border px-1">SGST</th>
-              <th className="border px-1">Total</th>
+              <th className="border px-1">Rate %</th>
+              <th className="border px-1">Amount</th>
             </tr>
           </thead>
 
           <tbody>
             {invoice.items.map((item, i) => {
               const amount = item.amount ?? item.quantity * item.unitPrice;
+              const cgstRate = item.cgstRate ?? 0;
+              const sgstRate = item.sgstRate ?? 0;
+              const cgstAmount = item.cgstAmount ?? (amount * cgstRate) / 100;
+              const sgstAmount = item.sgstAmount ?? (amount * sgstRate) / 100;
 
               return (
                 <tr key={i}>
@@ -171,11 +181,17 @@ export default function InvoiceDocument({
                   <td className="border px-1 text-right">
                     {formatCurrency(amount)}
                   </td>
-                  <td className="border px-1 text-right">
-                    {formatCurrency(item.cgstAmount || 0)}
+                  <td className="border px-1 text-center">
+                    {cgstRate}%
                   </td>
                   <td className="border px-1 text-right">
-                    {formatCurrency(item.sgstAmount || 0)}
+                    {formatCurrency(cgstAmount)}
+                  </td>
+                  <td className="border px-1 text-center">
+                    {sgstRate}%
+                  </td>
+                  <td className="border px-1 text-right">
+                    {formatCurrency(sgstAmount)}
                   </td>
                   <td className="border px-1 text-right">
                     {formatCurrency(item.total)}

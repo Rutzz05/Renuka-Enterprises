@@ -1,17 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { invoicesAPI } from '../services/api';
+import { generateInvoicePDF } from '../services/pdfGenerator';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Printer, Download, FileText, Loader2, CheckCircle2 } from 'lucide-react';
-import html2pdf from 'html2pdf.js';
 
 const InvoicePage = () => {
   const { id } = useParams();
   const [invoice, setInvoice] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
   const invoiceContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,19 +31,19 @@ const InvoicePage = () => {
 
   const handlePrint = () => window.print();
   
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!invoiceContentRef.current || !invoice) return;
     
-    const element = invoiceContentRef.current;
-    const opt = {
-      margin: 10,
-      filename: `Invoice_${invoice.invoiceId}.pdf`,
-      image: { type: 'jpeg' as const, quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { orientation: 'portrait' as const, unit: 'mm' as const, format: 'a4' as const }
-    };
-    
-    html2pdf().set(opt).from(element).save();
+    try {
+      setDownloading(true);
+      const element = invoiceContentRef.current;
+      await generateInvoicePDF(element, `Invoice_${invoice.invoiceId}`);
+    } catch (error: any) {
+      console.error('PDF download error:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setDownloading(false);
+    }
   };
 
   if (loading) {
@@ -98,16 +99,16 @@ const InvoicePage = () => {
               <Button onClick={handlePrint} variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20 gap-1.5">
                 <Printer className="w-4 h-4" /> Print
               </Button>
-              <Button onClick={handleDownload} className="bg-white/20 border-white/20 text-white hover:bg-white/30 gap-1.5">
-                <Download className="w-4 h-4" /> PDF
+              <Button onClick={handleDownload} disabled={downloading} className="bg-white/20 border-white/20 text-white hover:bg-white/30 gap-1.5">
+                <Download className="w-4 h-4" /> {downloading ? 'Generating...' : 'PDF'}
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container max-w-4xl -mt-5 relative z-10 pb-12 print:mt-0 print:p-0">
-        <Card className="border-0 shadow-lg overflow-hidden print:shadow-none print:border print:border-gray-200">
+      <div className="container max-w-4xl -mt-5 relative z-10 pb-12 print:mt-0 print:p-0 print:max-w-full print:container">
+        <Card className="border-0 shadow-lg overflow-hidden print:shadow-none print:border print:border-gray-200 print:overflow-visible">
           {/* Paid Ribbon */}
           {isPaid && (
             <div className="h-1.5 bg-gradient-to-r from-emerald-400 via-emerald-500 to-emerald-600" />
@@ -116,9 +117,9 @@ const InvoicePage = () => {
             <div className="h-1.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600" />
           )}
 
-          <CardContent ref={invoiceContentRef} className="p-8 md:p-10">
+          <CardContent ref={invoiceContentRef} className=\"p-8 md:p-10 print:p-2 print:m-0 print:overflow-hidden\" style={{ height: 'auto' }}>
             {/* Company Header */}
-            <div className="text-center mb-8 pb-6 border-b border-dashed">
+            <div className=\"text-center mb-8 pb-6 border-b border-dashed print:mb-3 print:pb-2 print:text-sm\">
               <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-3">
                 <span className="text-primary font-bold text-xl">R</span>
               </div>
@@ -128,10 +129,10 @@ const InvoicePage = () => {
             </div>
 
             {/* Invoice & Customer Details */}
-            <div className="grid md:grid-cols-2 gap-8 mb-8">
-              <div className="bg-muted/30 rounded-xl p-5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Invoice Details</p>
-                <div className="space-y-2.5 text-sm">
+            <div className="grid md:grid-cols-2 gap-8 mb-8 print:gap-3 print:mb-4">
+              <div className="bg-muted/30 rounded-xl p-5 print:p-2 print:rounded-sm print:border print:border-gray-300">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 print:mb-1 print:text-[10px]">Invoice Details</p>
+                <div className="space-y-2.5 text-sm print:space-y-1 print:text-xs">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Invoice ID</span>
                     <span className="font-semibold font-mono">{invoice.invoiceId}</span>
@@ -143,7 +144,7 @@ const InvoicePage = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Status</span>
                     <Badge
-                      className={`gap-1 ${isPaid
+                      className={`gap-1 print:text-[10px] print:px-1.5 print:py-0.5 ${isPaid
                         ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                         : 'bg-amber-50 text-amber-700 border-amber-200'
                       } border`}
@@ -155,16 +156,16 @@ const InvoicePage = () => {
                 </div>
               </div>
 
-              <div className="bg-muted/30 rounded-xl p-5">
-                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Customer Details</p>
-                <div className="space-y-2.5 text-sm">
+              <div className="bg-muted/30 rounded-xl p-5 print:p-2 print:rounded-sm print:border print:border-gray-300">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 print:mb-1 print:text-[10px]">Customer Details</p>
+                <div className="space-y-2.5 text-sm print:space-y-1 print:text-xs">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Name</span>
                     <span className="font-semibold">{invoice.customer?.name}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Email</span>
-                    <span className="font-semibold">{invoice.customer?.email}</span>
+                    <span className="font-semibold text-[12px]">{invoice.customer?.email}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Phone</span>
@@ -175,11 +176,11 @@ const InvoicePage = () => {
             </div>
 
             {/* Items Table */}
-            <div className="mb-8">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Items</p>
-              <div className="border rounded-xl overflow-hidden">
+            <div className="mb-8 print:mb-4">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 print:mb-1.5 print:text-[10px]">Items</p>
+              <div className="border rounded-xl overflow-hidden print:rounded-sm">
                 {/* Header */}
-                <div className="grid grid-cols-12 gap-4 px-5 py-3 bg-muted/50 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                <div className="grid grid-cols-12 gap-4 px-5 py-3 bg-muted/50 text-xs font-semibold uppercase tracking-wider text-muted-foreground print:gap-1 print:px-2 print:py-1.5 print:text-[9px]">
                   <div className="col-span-5">Item</div>
                   <div className="col-span-2 text-center">Qty</div>
                   <div className="col-span-2 text-right">Price</div>
@@ -187,7 +188,7 @@ const InvoicePage = () => {
                 </div>
                 {/* Rows */}
                 {invoice.items.map((item: any, index: number) => (
-                  <div key={index} className={`grid grid-cols-12 gap-4 px-5 py-4 text-sm ${index % 2 === 0 ? '' : 'bg-muted/20'} ${index < invoice.items.length - 1 ? 'border-b' : ''}`}>
+                  <div key={index} className={`grid grid-cols-12 gap-4 px-5 py-4 text-sm print:gap-1 print:px-2 print:py-1.5 print:text-[10px] ${index % 2 === 0 ? '' : 'bg-muted/20'} ${index < invoice.items.length - 1 ? 'border-b' : ''}`}>
                     <div className="col-span-5 font-medium">{item.description || item.name}</div>
                     <div className="col-span-2 text-center text-muted-foreground">{item.quantity}</div>
                     <div className="col-span-2 text-right text-muted-foreground">₹{((item.unitPrice || item.price) || 0).toLocaleString()}</div>
@@ -198,19 +199,19 @@ const InvoicePage = () => {
             </div>
 
             {/* Total */}
-            <div className="flex justify-end mb-8">
-              <div className="bg-primary/5 rounded-xl px-8 py-5 border border-primary/10">
-                <p className="text-xs text-muted-foreground mb-1">Total Amount</p>
-                <p className="text-3xl font-bold text-primary">₹{invoice.totalAmount?.toLocaleString()}</p>
+            <div className="flex justify-end mb-8 print:mb-3">
+              <div className="bg-primary/5 rounded-xl px-8 py-5 border border-primary/10 print:rounded-sm print:px-3 print:py-2 print:border-gray-300">
+                <p className="text-xs text-muted-foreground mb-1 print:text-[9px]">Total Amount</p>
+                <p className="text-3xl font-bold text-primary print:text-lg">₹{invoice.totalAmount?.toLocaleString()}</p>
               </div>
             </div>
 
-            <Separator className="mb-6" />
+            <Separator className="mb-6 print:mb-2" />
 
             {/* Footer */}
-            <div className="text-center text-sm text-muted-foreground space-y-1">
+            <div className="text-center text-sm text-muted-foreground space-y-1 print:text-xs print:space-y-0.5">
               <p className="font-medium">Thank you for choosing Renuka Enterprises!</p>
-              <p className="text-xs">For any queries, contact us at +91 9823021804</p>
+              <p className="text-xs print:text-[9px]">For any queries, contact us at +91 9823021804</p>
             </div>
           </CardContent>
         </Card>

@@ -7,6 +7,11 @@ const invoiceSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    serialNumber: {
+      type: Number,
+      required: true,
+      min: 1,
+    },
     customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',

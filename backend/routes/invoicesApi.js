@@ -2,7 +2,7 @@ const express = require('express');
 const Invoice = require('../models/Invoice');
 const User = require('../models/User');
 const { auth, adminAuth } = require('../middleware/auth');
-const { calculateInvoiceTotals, getFinancialYearRange } = require('../utils/invoice');
+const { buildInvoiceNumber, calculateInvoiceTotals, getFinancialYearRange } = require('../utils/invoice');
 
 const router = express.Router();
 
@@ -31,7 +31,7 @@ const buildCustomerDetails = (selectedCustomer, billTo) => ({
   state: billTo.state,
 });
 
-const buildInvoiceNumber = async (invoiceDate) => {
+const buildNextInvoiceNumber = async (invoiceDate) => {
   const { start, end, label, monthCode } = getFinancialYearRange(invoiceDate);
   const existingInvoices = await Invoice.find({
     invoiceDate: { $gte: start, $lte: end },
@@ -75,7 +75,7 @@ router.get('/', auth, adminAuth, async (_req, res) => {
 router.get('/next-number', auth, adminAuth, async (req, res) => {
   try {
     const invoiceDate = req.query.invoiceDate ? new Date(req.query.invoiceDate) : new Date();
-    const invoiceId = await buildInvoiceNumber(invoiceDate);
+    const invoiceId = await buildNextInvoiceNumber(invoiceDate);
     return res.json({ invoiceId });
   } catch (err) {
     console.error(err.message);
@@ -90,6 +90,7 @@ router.post('/', auth, adminAuth, async (req, res) => {
       bookingId,
       type,
       items,
+      serialNumber,
       notes,
       dueDate,
       status,
@@ -105,7 +106,7 @@ router.post('/', auth, adminAuth, async (req, res) => {
       bankDetails,
     } = req.body;
 
-    if (!type || !Array.isArray(items) || items.length === 0) {
+    if (!type || !serialNumber || !Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ message: 'Invoice type and at least one product row are required' });
     }
 
@@ -160,10 +161,22 @@ router.post('/', auth, adminAuth, async (req, res) => {
     }
 
     const parsedInvoiceDate = new Date(invoiceDate);
-    const invoiceId = await buildInvoiceNumber(parsedInvoiceDate);
+    const numericSerial = Number(serialNumber);
+
+    if (Number.isNaN(numericSerial) || numericSerial <= 0) {
+      return res.status(400).json({ message: 'Serial number must be a valid number greater than 0' });
+    }
+
+    const invoiceId = buildInvoiceNumber(numericSerial, parsedInvoiceDate);
+
+    const existingInvoice = await Invoice.findOne({ invoiceId });
+    if (existingInvoice) {
+      return res.status(409).json({ message: 'An invoice with this serial number already exists for the selected period' });
+    }
 
     const invoice = new Invoice({
       invoiceId,
+      serialNumber: numericSerial,
       customer: selectedCustomer?._id || null,
       customerDetails: buildCustomerDetails(selectedCustomer, normalizedBillTo),
       invoiceDate: parsedInvoiceDate,

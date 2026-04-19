@@ -1,52 +1,74 @@
 import { Link } from "react-router-dom";
-import { Phone, Droplets, Zap, ShieldCheck, Star, Clock, Wrench } from "lucide-react";
+import { Phone, Droplets, Zap, Clock, Shield, Wrench, CheckCircle, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useAuth } from "../contexts/AuthContext";
 
 const PHONE = "+919823021804";
 
-const highlights = [
-  { icon: Clock, title: "10+ Years", desc: "Of trusted service in Nashik" },
-  { icon: ShieldCheck, title: "Certified Experts", desc: "Factory-trained technicians" },
-  { icon: Star, title: "5000+ Customers", desc: "Satisfied families & businesses" },
-  { icon: Wrench, title: "Same-Day Service", desc: "Quick response, reliable repairs" },
-];
-
+// Service cards with features
 const services = [
   {
     icon: Droplets,
     title: "Aquaguard Services",
-    desc: "Sales, installation, servicing & repair of water purifiers. Pure water for your family.",
-    link: "/services",
+    description: "Complete water purification solutions - sales, installation, servicing, and repair. Pure water for your family.",
+    features: ["Installation", "Servicing", "Repair", "Maintenance"],
   },
   {
     icon: Zap,
-    title: "Inverter & Battery",
-    desc: "Inverter sales, installation, repair & battery replacement. Never lose power.",
-    link: "/services",
+    title: "Inverter Solutions",
+    description: "Backup power systems - sales, installation, repair, and battery replacement. Never lose power again.",
+    features: ["Sales", "Installation", "Repairs", "Battery Replacement"],
   },
+  {
+    icon: Wrench,
+    title: "AMC & Support",
+    description: "Annual maintenance contracts and 24/7 customer support. We keep your systems running smoothly.",
+    features: ["24/7 Support", "Maintenance", "Warranty", "Quick Response"],
+  },
+];
+
+// Why choose us
+const whyChooseUs = [
+  { icon: Clock, title: "10+ Years Experience", description: "Trusted by thousands of customers" },
+  { icon: Shield, title: "Certified Technicians", description: "Factory-trained & certified experts" },
+  { icon: Phone, title: "24/7 Support", description: "Always available when you need us" },
+  { icon: CheckCircle, title: "Quality Guaranteed", description: "We stand behind our work" },
 ];
 
 export default function HomePage() {
   const { user } = useAuth();
 
   return (
-    <>
-      {/* Hero */}
-      <section className="hero" style={{ background: "var(--hero-gradient)" }}>
-        <div className="container relative z-10 text-center text-primary-foreground max-w-4xl mx-auto">
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section 
+        className="hero relative overflow-hidden" 
+        style={{ background: "var(--hero-gradient)" }}
+      >
+        <div className="absolute inset-0 space-y-0">
+          <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-secondary/10 blur-3xl" />
+          <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-primary-foreground/5 blur-3xl" />
+        </div>
+
+        <div className="container relative z-10 text-center text-primary-foreground max-w-4xl mx-auto py-20 md:py-28">
           <p className="text-sm font-semibold uppercase tracking-widest mb-3 opacity-80">
             Nashik's Trusted Service Partner
           </p>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
             Renuka Enterprises
           </h1>
-          <p className="max-w-xl mx-auto text-lg opacity-90 mb-8 font-body">
-            10+ years of reliable Aquaguard & Inverter services — sales, installation, repair & maintenance.
+          <p className="max-w-2xl mx-auto text-lg md:text-xl opacity-90 mb-10 font-body leading-relaxed">
+            10+ years of reliable Aquaguard & Inverter services — sales, installation, repair & maintenance for residential and commercial needs.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href={`tel:${PHONE}`}>
-              <Button size="lg" className="gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold shadow-lg">
+              <Button 
+                size="lg" 
+                className="gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold shadow-lg"
+              >
                 <Phone className="w-5 h-5" /> Call for Service
               </Button>
             </a>
@@ -54,76 +76,116 @@ export default function HomePage() {
               <Link to={user.role === 'admin' ? '/admin' : '/dashboard'}>
                 <Button
                   size="lg"
-                  className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-semibold"
+                  className="gap-2 bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-semibold"
                 >
-                  Go to Dashboard
+                  Dashboard
+                  <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             ) : (
               <Link to="/login">
                 <Button
                   size="lg"
-                  className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-semibold"
+                  className="gap-2 bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-semibold"
                 >
                   Login / Register
+                  <ArrowRight className="w-5 h-5" />
                 </Button>
               </Link>
             )}
           </div>
         </div>
-        {/* decorative circles */}
-        <div className="absolute -top-20 -right-20 w-80 h-80 rounded-full bg-secondary/10 blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-primary-foreground/5 blur-3xl" />
       </section>
 
-      {/* Highlights */}
-      <section className="container section">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {highlights.map((h) => (
-            <div
-              key={h.title}
-              className="card-elevated rounded-lg bg-card p-6 text-center transition-smooth animate-fade-in"
-            >
-              <h.icon className="w-8 h-8 mx-auto mb-2 text-primary" />
-              <h3 className="text-lg font-bold">{h.title}</h3>
-              <p className="text-sm text-muted-foreground mt-1">{h.desc}</p>
-            </div>
-          ))}
+      {/* Services Grid */}
+      <section className="container py-16 md:py-24">
+        <div className="text-center mb-16">
+          <p className="text-sm font-semibold uppercase tracking-widest text-primary mb-3">Our Services</p>
+          <h2 className="text-3xl md:text-4xl font-bold">What We Offer</h2>
+          <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
+            Comprehensive solutions for water purification and backup power systems tailored to your needs.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-3 gap-8">
+          {services.map((service) => {
+            const Icon = service.icon;
+            return (
+              <Card 
+                key={service.title}
+                className="border-0 shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
+              >
+                <CardHeader className="pb-4">
+                  <div className="w-14 h-14 rounded-lg bg-primary/10 group-hover:bg-primary/15 flex items-center justify-center mb-4 transition-colors">
+                    <Icon className="w-7 h-7 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold">{service.title}</h3>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-muted-foreground leading-relaxed">{service.description}</p>
+                  <ul className="space-y-2">
+                    {service.features.map((feature) => (
+                      <li key={feature} className="flex items-center gap-2 text-sm">
+                        <CheckCircle className="w-4 h-4 text-secondary flex-shrink-0" />
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       </section>
 
-      {/* Service Cards */}
-      <section className="bg-muted/50 section">
+      {/* Why Choose Us */}
+      <section className="bg-muted/50 py-16 md:py-24">
         <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-10">Our Core Services</h2>
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {services.map((s) => (
-              <Link
-                key={s.title}
-                to={s.link}
-                className="group card-elevated rounded-lg bg-card p-6 transition-smooth hover:-translate-y-[4px]"
-              >
-                <s.icon className="w-10 h-10 text-secondary mb-4" />
-                <h3 className="text-xl font-bold mb-2 group-hover:text-primary transition-colors">{s.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
-              </Link>
-            ))}
+          <div className="text-center mb-16">
+            <p className="text-sm font-semibold uppercase tracking-widest text-primary mb-3">Why Choose Us</p>
+            <h2 className="text-3xl md:text-4xl font-bold">Why Renuka Enterprises</h2>
+            <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
+              Trusted by over 5000 satisfied customers across Nashik with quality service you can rely on.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {whyChooseUs.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div 
+                  key={item.title}
+                  className="bg-background rounded-xl p-6 text-center hover:shadow-md transition-shadow"
+                >
+                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                    <Icon className="w-6 h-6 text-primary" />
+                  </div>
+                  <h3 className="font-bold mb-2">{item.title}</h3>
+                  <p className="text-sm text-muted-foreground">{item.description}</p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="container section text-center">
-        <h2 className="text-2xl md:text-3xl font-bold mb-3">Need Immediate Assistance?</h2>
-        <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-          Our technicians are just a call away. We serve all areas across Nashik.
-        </p>
-        <a href={`tel:${PHONE}`}>
-          <Button size="lg" className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg">
-            <Phone className="w-5 h-5" /> +91 98230 21804
-          </Button>
-        </a>
+      {/* CTA Section */}
+      <section className="container py-16 md:py-24">
+        <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-12 md:p-16 text-center text-primary-foreground">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Need Immediate Assistance?</h2>
+          <p className="text-lg opacity-90 mb-8 max-w-2xl mx-auto">
+            Our technicians are ready to help. We serve all areas across Nashik with fast, reliable service.
+          </p>
+          <a href={`tel:${PHONE}`}>
+            <Button 
+              size="lg"
+              className="gap-2 bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-semibold shadow-lg"
+            >
+              <Phone className="w-5 h-5" /> Call +91 98230 21804
+            </Button>
+          </a>
+        </div>
       </section>
-    </>
+    </div>
   );
 }

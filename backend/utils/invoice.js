@@ -14,6 +14,12 @@ const getFinancialYearRange = (inputDate) => {
   };
 };
 
+const buildInvoiceNumber = (serialNumber, invoiceDate) => {
+  const safeSerial = String(Number(serialNumber || 0) || "").trim();
+  const { label, monthCode } = getFinancialYearRange(invoiceDate);
+  return `${safeSerial.padStart(3, "0")}/${monthCode}/${label}`;
+};
+
 const numberToWords = (value) => {
   const ones = [
     "",
@@ -120,6 +126,7 @@ const calculateInvoiceTotals = (items) => {
 
 module.exports = {
   getFinancialYearRange,
+  buildInvoiceNumber,
   numberToWords,
   calculateInvoiceTotals,
   roundCurrency,

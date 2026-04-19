@@ -19,6 +19,7 @@ export type InvoiceFormValues = {
   customerMode: "existing" | "manual";
   customerId: string;
   bookingId: string;
+  serialNumber: string;
   invoiceId: string;
   invoiceDate: string;
   dateOfSupply: string;
@@ -62,6 +63,8 @@ export type CalculatedInvoiceTotals = {
 
 const roundCurrency = (value: number) => Number((Number(value) || 0).toFixed(2));
 
+const MONTH_CODES = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
 export const formatCurrency = (value: number) =>
   new Intl.NumberFormat("en-IN", {
     style: "currency",
@@ -86,6 +89,23 @@ export const createEmptyItem = (): InvoiceLineItem => ({
   cgstRate: "9",
   sgstRate: "9",
 });
+
+export const getFinancialYearLabel = (dateValue: string) => {
+  const date = dateValue ? new Date(dateValue) : new Date();
+  const startYear = date.getMonth() >= 3 ? date.getFullYear() : date.getFullYear() - 1;
+  return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
+};
+
+export const getMonthCode = (dateValue: string) => {
+  const date = dateValue ? new Date(dateValue) : new Date();
+  return MONTH_CODES[date.getMonth()];
+};
+
+export const formatInvoiceNumberPreview = (serialNumber: string, invoiceDate: string) => {
+  const serial = String(Number(serialNumber || 0) || "").trim();
+  if (!serial || !invoiceDate) return "";
+  return `${serial.padStart(3, "0")}/${getMonthCode(invoiceDate)}/${getFinancialYearLabel(invoiceDate)}`;
+};
 
 export const calculateInvoiceTotals = (items: InvoiceLineItem[]): CalculatedInvoiceTotals => {
   const normalizedItems = items.map((item) => {
@@ -183,6 +203,7 @@ export const validateInvoiceForm = (form: InvoiceFormValues) => {
   const errors: Record<string, string> = {};
 
   if (!form.invoiceDate) errors.invoiceDate = "Invoice date is required.";
+  if (!form.serialNumber || Number(form.serialNumber) <= 0) errors.serialNumber = "Serial number must be greater than 0.";
   if (!form.dateOfSupply) errors.dateOfSupply = "Date of supply is required.";
   if (!form.state.trim()) errors.state = "State is required.";
   if (!form.placeOfSupply.trim()) errors.placeOfSupply = "Place of supply is required.";

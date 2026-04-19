@@ -118,8 +118,19 @@
 }
 
 @media print {
+  * {
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
   body {
     background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 210mm;
+    height: 297mm;
   }
 
   body * {
@@ -134,12 +145,14 @@
   #invoice-content {
     position: absolute;
     inset: 0;
-    width: 100%;
-    margin: 0;
+    width: 210mm;
+    height: 297mm;
+    margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
     box-shadow: none !important;
     border-radius: 0 !important;
+    page-break-after: avoid;
   }
 
   .invoice-toolbar {
@@ -147,8 +160,129 @@
   }
 
   .invoice-sheet {
-    width: 100%;
+    width: 210mm;
+    height: 297mm;
     min-height: auto;
+    max-height: 297mm;
     padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+    page-break-after: avoid;
+  }
+
+  .invoice-container {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  table {
+    page-break-inside: avoid;
+    border-collapse: collapse;
+  }
+
+  tr {
+    page-break-inside: avoid;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  @media print {
+    body {
+      color-scheme: light;
+    }
+  }
+}
+
+/* UI Consistency Utilities */
+@layer utilities {
+  /* Container sizes */
+  .container-sm {
+    @apply max-w-2xl;
+  }
+
+  .container-md {
+    @apply max-w-4xl;
+  }
+
+  .container-lg {
+    @apply max-w-6xl;
+  }
+
+  /* Responsive grid utilities */
+  .grid-responsive {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
+  }
+
+  .grid-responsive-sm {
+    @apply grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4;
+  }
+
+  /* Card styling consistency */
+  .card-base {
+    @apply rounded-lg border border-border bg-card p-6 shadow-sm;
+  }
+
+  .card-hover {
+    @apply transition-all hover:shadow-md hover:-translate-y-1;
+  }
+
+  .card-interactive {
+    @apply card-base card-hover cursor-pointer;
+  }
+
+  /* Section spacing */
+  .section-padding {
+    @apply py-12 md:py-16 lg:py-20;
+  }
+
+  /* Button consistency */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 transition-colors;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/90 transition-colors;
+  }
+
+  /* Text utilities */
+  .text-hero {
+    @apply text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight;
+  }
+
+  .text-section {
+    @apply text-3xl md:text-4xl font-bold;
+  }
+
+  .text-subsection {
+    @apply text-xl md:text-2xl font-semibold;
+  }
+
+  .text-label {
+    @apply text-xs uppercase tracking-widest font-semibold;
+  }
+
+  /* Loading animation */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
   }
 }

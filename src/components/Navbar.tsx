@@ -13,6 +13,13 @@ const navLinks = [
 
 const PHONE = "+919823021804";
 
+/**
+ * Navbar - Unified navigation with:
+ * - Consistent styling across all pages
+ * - Active page highlighting
+ * - Mobile responsive menu
+ * - Auth integration
+ */
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
@@ -23,39 +30,43 @@ export default function Navbar() {
     setOpen(false);
   };
 
+  const isActive = (path: string) => pathname === path;
+
   return (
-    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b shadow-sm">
+    <header className="sticky top-0 z-50 bg-card/95 backdrop-blur border-b border-border shadow-sm">
       <div className="container flex items-center justify-between h-16">
-        <Link to="/" className="flex items-center gap-2 transition-smooth hover:scale-[1.02]">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 transition-transform hover:scale-105 flex-shrink-0">
           <div className="w-9 h-9 rounded-lg bg-primary flex items-center justify-center text-primary-foreground font-heading font-extrabold text-lg shadow-sm">
             R
           </div>
           <span className="font-heading font-bold text-lg text-foreground hidden sm:inline">
-            Renuka Enterprises
+            Renuka
           </span>
         </Link>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((l) => (
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-0.5">
+          {navLinks.map((link) => (
             <Link
-              key={l.to}
-              to={l.to}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-smooth ${
-                pathname === l.to
-                  ? "bg-primary/10 text-primary"
+              key={link.to}
+              to={link.to}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive(link.to)
+                  ? "text-primary bg-primary/10"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
-              {l.label}
+              {link.label}
             </Link>
           ))}
+          
           {user && (
             <Link
               to={user.role === 'admin' ? '/admin' : '/dashboard'}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-smooth ${
-                pathname === (user.role === 'admin' ? '/admin' : '/dashboard')
-                  ? "bg-primary/10 text-primary"
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                isActive(user.role === 'admin' ? '/admin' : '/dashboard')
+                  ? "text-primary bg-primary/10"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
@@ -64,33 +75,39 @@ export default function Navbar() {
           )}
         </nav>
 
+        {/* Right Actions */}
         <div className="flex items-center gap-2">
           {user ? (
             <div className="hidden md:flex items-center gap-2">
-              <span className="text-sm font-medium text-foreground">Welcome, {user.name}</span>
-              <Button size="sm" variant="outline" onClick={handleLogout}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
+              <span className="text-sm font-medium text-foreground">
+                {user.name}
+              </span>
+              <Button size="sm" variant="outline" onClick={handleLogout} className="gap-1.5">
+                <LogOut className="w-4 h-4" />
+                <span className="hidden lg:inline">Logout</span>
               </Button>
             </div>
           ) : (
             <div className="hidden md:flex items-center gap-2">
               <Link to="/login">
-                <Button size="sm" variant="outline">
-                  <User className="w-4 h-4 mr-2" />
-                  Login
+                <Button size="sm" variant="outline" className="gap-1.5">
+                  <User className="w-4 h-4" />
+                  <span className="hidden lg:inline">Login</span>
                 </Button>
               </Link>
             </div>
           )}
-          <a href={`tel:${PHONE}`}>
+          
+          <a href={`tel:${PHONE}`} className="hidden sm:inline">
             <Button size="sm" className="gap-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/90">
               <Phone className="w-4 h-4" />
-              <span className="hidden sm:inline">Call for Service</span>
+              <span className="hidden lg:inline">Call</span>
             </Button>
           </a>
+
+          {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 rounded-md hover:bg-muted text-foreground"
+            className="md:hidden p-2 rounded-md hover:bg-muted text-foreground transition-colors"
             onClick={() => setOpen(!open)}
             aria-label="Toggle menu"
           >
@@ -99,40 +116,42 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile nav */}
+      {/* Mobile Menu */}
       {open && (
-        <nav className="md:hidden border-t bg-card pb-3">
-          {navLinks.map((l) => (
+        <nav className="md:hidden bg-background border-t border-border px-4 py-4 space-y-2">
+          {navLinks.map((link) => (
             <Link
-              key={l.to}
-              to={l.to}
+              key={link.to}
+              to={link.to}
               onClick={() => setOpen(false)}
-              className={`block px-6 py-3 text-sm font-medium transition-colors ${
-                pathname === l.to
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+              className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                isActive(link.to)
+                  ? "text-primary bg-primary/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
-              {l.label}
+              {link.label}
             </Link>
           ))}
+          
           {user && (
             <Link
               to={user.role === 'admin' ? '/admin' : '/dashboard'}
               onClick={() => setOpen(false)}
-              className={`block px-6 py-3 text-sm font-medium transition-colors ${
-                pathname === (user.role === 'admin' ? '/admin' : '/dashboard')
-                  ? "bg-primary/10 text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+              className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                isActive(user.role === 'admin' ? '/admin' : '/dashboard')
+                  ? "text-primary bg-primary/10"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted"
               }`}
             >
               {user.role === 'admin' ? 'Admin Dashboard' : 'Customer Dashboard'}
             </Link>
           )}
+
           {user ? (
             <button
               onClick={handleLogout}
-              className="block w-full text-left px-6 py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="w-full text-left px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
               Logout
             </button>
@@ -140,13 +159,25 @@ export default function Navbar() {
             <Link
               to="/login"
               onClick={() => setOpen(false)}
-              className="block px-6 py-3 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="block px-4 py-3 rounded-lg text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
               Login
             </Link>
           )}
+
+          <a
+            href={`tel:${PHONE}`}
+            onClick={() => setOpen(false)}
+            className="block px-4 py-3 rounded-lg text-sm font-medium text-secondary hover:bg-secondary/10 transition-colors"
+          >
+            Call +91 98230 21804
+          </a>
         </nav>
       )}
+    </header>
+  );
+}
+
     </header>
   );
 }

@@ -12,6 +12,7 @@ import {
   calculateInvoiceTotals,
   createEmptyAddress,
   createEmptyItem,
+  formatInvoiceNumberPreview,
   formatCurrency,
   InvoiceFormValues,
   validateInvoiceForm,
@@ -50,6 +51,7 @@ const initialInvoiceForm = (): InvoiceFormValues => {
     customerMode: "existing",
     customerId: "",
     bookingId: "",
+    serialNumber: "",
     invoiceId: "",
     invoiceDate: today,
     dateOfSupply: today,
@@ -88,30 +90,17 @@ export default function AdminInvoicePanel({ customers, bookings, onCreated }: Pr
   const [form, setForm] = useState<InvoiceFormValues>(initialInvoiceForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
-  const [loadingNumber, setLoadingNumber] = useState(false);
 
   const totals = useMemo(() => calculateInvoiceTotals(form.items), [form.items]);
+  const invoicePreviewNumber = useMemo(
+    () => formatInvoiceNumberPreview(form.serialNumber, form.invoiceDate),
+    [form.serialNumber, form.invoiceDate],
+  );
 
   const bookingOptions = useMemo(
     () => bookings.filter((booking) => booking.customer?._id === form.customerId),
     [bookings, form.customerId],
   );
-
-  const fetchNextInvoiceNumber = async (invoiceDate: string) => {
-    try {
-      setLoadingNumber(true);
-      const response = await invoicesAPI.getNextInvoiceNumber(invoiceDate);
-      setForm((current) => ({ ...current, invoiceId: response.data.invoiceId }));
-    } catch (_error) {
-      toast.error("Unable to generate the next invoice number right now.");
-    } finally {
-      setLoadingNumber(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchNextInvoiceNumber(form.invoiceDate);
-  }, [form.invoiceDate]);
 
   useEffect(() => {
     if (!form.shipTo.sameAsBillTo) return;
@@ -183,10 +172,8 @@ export default function AdminInvoicePanel({ customers, bookings, onCreated }: Pr
   };
 
   const resetForm = () => {
-    const next = initialInvoiceForm();
-    setForm(next);
+    setForm(initialInvoiceForm());
     setErrors({});
-    fetchNextInvoiceNumber(next.invoiceDate);
   };
 
   const submitInvoice = async (event: React.FormEvent) => {
@@ -209,6 +196,7 @@ export default function AdminInvoicePanel({ customers, bookings, onCreated }: Pr
       await invoicesAPI.createInvoice({
         customerId: form.customerMode === "existing" ? form.customerId : null,
         bookingId: form.customerMode === "existing" ? form.bookingId || null : null,
+        serialNumber: Number(form.serialNumber),
         type: "product",
         invoiceDate: form.invoiceDate,
         dateOfSupply: form.dateOfSupply,
@@ -252,9 +240,15 @@ export default function AdminInvoicePanel({ customers, bookings, onCreated }: Pr
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               <div className={fieldClass}>
-                <Label htmlFor="invoice-id">Invoice Number</Label>
-                <Input id="invoice-id" value={loadingNumber ? "Generating..." : form.invoiceId} readOnly />
-                <FieldHelp>Automatically generated based on financial year.</FieldHelp>
+                <Label htmlFor="serial-number">Serial Number</Label>
+                <Input id="serial-number" type="number" min="1" placeholder="Enter serial number (e.g., 1)" value={form.serialNumber} onChange={(e) => updateField("serialNumber", e.target.value)} />
+                <FieldHelp>Enter the running serial number for this invoice.</FieldHelp>
+                <FieldError>{errors.serialNumber}</FieldError>
+              </div>
+              <div className={fieldClass}>
+                <Label htmlFor="invoice-id-preview">Invoice Number Preview</Label>
+                <Input id="invoice-id-preview" value={invoicePreviewNumber || "Preview will appear here"} readOnly />
+                <FieldHelp>Final format is generated from serial number and invoice date.</FieldHelp>
               </div>
               <div className={fieldClass}>
                 <Label htmlFor="invoice-date">Invoice Date</Label>

@@ -34,7 +34,11 @@ export default function InvoicePageV2() {
     if (!invoice) return;
     setGeneratingPDF(true);
     try {
-      await generateInvoicePDF(invoice);
+      const element = document.getElementById("invoice-content");
+      if (!element) {
+        throw new Error("Invoice content not found");
+      }
+      await generateInvoicePDF(element, invoice.invoiceId || "invoice");
     } catch (error) {
       console.error("Failed to download PDF", error);
       alert("Failed to download PDF. Please try again.");

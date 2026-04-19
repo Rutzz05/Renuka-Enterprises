@@ -27,9 +27,16 @@ const emptyProductForm = {
 
 const createEmptyInvoiceItem = () => ({
   description: "",
+  hsnCode: "",
   quantity: "1",
   unitPrice: "0",
 });
+
+const emptyManualCustomer = {
+  name: "",
+  phone: "",
+  address: "",
+};
 
 export default function AdminPageV2() {
   const { user, logout } = useAuth();
@@ -43,6 +50,7 @@ export default function AdminPageV2() {
 
   const [productForm, setProductForm] = useState(emptyProductForm);
   const [invoiceForm, setInvoiceForm] = useState({
+    customerMode: "existing",
     customerId: "",
     bookingId: "",
     type: "service",
@@ -50,6 +58,7 @@ export default function AdminPageV2() {
     dueDate: "",
     notes: "",
     status: "generated",
+    manualCustomer: emptyManualCustomer,
     items: [createEmptyInvoiceItem()],
   });
 
@@ -190,22 +199,49 @@ export default function AdminPageV2() {
         return;
       }
 
+      if (invoiceForm.customerMode === "existing" && !invoiceForm.customerId) {
+        toast.error("Please select an existing customer.");
+        stopBusy();
+        return;
+      }
+
+      if (
+        invoiceForm.customerMode === "manual" &&
+        (!invoiceForm.manualCustomer.name.trim() || !invoiceForm.manualCustomer.phone.trim())
+      ) {
+        toast.error("Please enter the manual customer name and phone number.");
+        stopBusy();
+        return;
+      }
+
       await invoicesAPI.createInvoice({
-        customerId: invoiceForm.customerId,
-        bookingId: invoiceForm.bookingId || null,
+        customerId: invoiceForm.customerMode === "existing" ? invoiceForm.customerId : null,
+        bookingId: invoiceForm.customerMode === "existing" ? invoiceForm.bookingId || null : null,
         type: invoiceForm.type,
         tax: Number(invoiceForm.tax || 0),
         dueDate: invoiceForm.dueDate || null,
         notes: invoiceForm.notes,
         status: invoiceForm.status,
+        customerDetails:
+          invoiceForm.customerMode === "manual"
+            ? {
+                name: invoiceForm.manualCustomer.name,
+                phone: invoiceForm.manualCustomer.phone,
+                address: invoiceForm.manualCustomer.address,
+              }
+            : {
+                address: invoiceForm.manualCustomer.address,
+              },
         items: invoiceForm.items.map((item) => ({
           description: item.description,
+          hsnCode: item.hsnCode,
           quantity: Number(item.quantity),
           unitPrice: Number(item.unitPrice),
         })),
       });
 
       setInvoiceForm({
+        customerMode: "existing",
         customerId: "",
         bookingId: "",
         type: "service",
@@ -213,6 +249,7 @@ export default function AdminPageV2() {
         dueDate: "",
         notes: "",
         status: "generated",
+        manualCustomer: emptyManualCustomer,
         items: [createEmptyInvoiceItem()],
       });
       toast.success("Invoice created successfully.");
@@ -477,31 +514,119 @@ export default function AdminPageV2() {
               </CardHeader>
               <CardContent className="p-6 pt-0">
                 <form onSubmit={submitInvoice} className="space-y-4">
-                  <select
-                    value={invoiceForm.customerId}
-                    onChange={(e) => setInvoiceForm((current) => ({ ...current, customerId: e.target.value, bookingId: "" }))}
-                    className="h-11 w-full rounded-xl border bg-background px-3 text-sm"
-                  >
-                    <option value="">Select customer</option>
-                    {customers.map((customer) => (
-                      <option key={customer.id} value={customer.id}>
-                        {customer.name} - {customer.phone}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      className={`rounded-2xl border px-4 py-3 text-left transition ${
+                        invoiceForm.customerMode === "existing"
+                          ? "border-primary bg-primary/5 text-slate-900"
+                          : "border-border bg-background text-slate-600"
+                      }`}
+                      onClick={() =>
+                        setInvoiceForm((current) => ({
+                          ...current,
+                          customerMode: "existing",
+                          bookingId: "",
+                        }))
+                      }
+                    >
+                      <p className="font-semibold">Select existing customer</p>
+                      <p className="mt-1 text-sm text-slate-500">Link this invoice to a registered customer.</p>
+                    </button>
+                    <button
+                      type="button"
+                      className={`rounded-2xl border px-4 py-3 text-left transition ${
+                        invoiceForm.customerMode === "manual"
+                          ? "border-primary bg-primary/5 text-slate-900"
+                          : "border-border bg-background text-slate-600"
+                      }`}
+                      onClick={() =>
+                        setInvoiceForm((current) => ({
+                          ...current,
+                          customerMode: "manual",
+                          customerId: "",
+                          bookingId: "",
+                        }))
+                      }
+                    >
+                      <p className="font-semibold">Enter customer manually</p>
+                      <p className="mt-1 text-sm text-slate-500">Use this for walk-in or offline customers.</p>
+                    </button>
+                  </div>
 
-                  <select
-                    value={invoiceForm.bookingId}
-                    onChange={(e) => setInvoiceForm((current) => ({ ...current, bookingId: e.target.value }))}
-                    className="h-11 w-full rounded-xl border bg-background px-3 text-sm"
-                  >
-                    <option value="">Link booking (optional)</option>
-                    {bookingOptionsForCustomer.map((booking) => (
-                      <option key={booking._id} value={booking._id}>
-                        {booking.issueType} - {new Date(booking.preferredDate).toLocaleDateString("en-IN")}
-                      </option>
-                    ))}
-                  </select>
+                  {invoiceForm.customerMode === "existing" ? (
+                    <>
+                      <select
+                        value={invoiceForm.customerId}
+                        onChange={(e) => setInvoiceForm((current) => ({ ...current, customerId: e.target.value, bookingId: "" }))}
+                        className="h-11 w-full rounded-xl border bg-background px-3 text-sm"
+                      >
+                        <option value="">Select customer</option>
+                        {customers.map((customer) => (
+                          <option key={customer.id} value={customer.id}>
+                            {customer.name} - {customer.phone}
+                          </option>
+                        ))}
+                      </select>
+
+                      <select
+                        value={invoiceForm.bookingId}
+                        onChange={(e) => setInvoiceForm((current) => ({ ...current, bookingId: e.target.value }))}
+                        className="h-11 w-full rounded-xl border bg-background px-3 text-sm"
+                      >
+                        <option value="">Link booking (optional)</option>
+                        {bookingOptionsForCustomer.map((booking) => (
+                          <option key={booking._id} value={booking._id}>
+                            {booking.issueType} - {new Date(booking.preferredDate).toLocaleDateString("en-IN")}
+                          </option>
+                        ))}
+                      </select>
+
+                      <Input
+                        placeholder="Address for invoice (optional)"
+                        value={invoiceForm.manualCustomer.address}
+                        onChange={(e) =>
+                          setInvoiceForm((current) => ({
+                            ...current,
+                            manualCustomer: { ...current.manualCustomer, address: e.target.value },
+                          }))
+                        }
+                      />
+                    </>
+                  ) : (
+                    <div className="grid gap-4">
+                      <Input
+                        placeholder="Customer name"
+                        value={invoiceForm.manualCustomer.name}
+                        onChange={(e) =>
+                          setInvoiceForm((current) => ({
+                            ...current,
+                            manualCustomer: { ...current.manualCustomer, name: e.target.value },
+                          }))
+                        }
+                      />
+                      <Input
+                        placeholder="Phone number"
+                        value={invoiceForm.manualCustomer.phone}
+                        onChange={(e) =>
+                          setInvoiceForm((current) => ({
+                            ...current,
+                            manualCustomer: { ...current.manualCustomer, phone: e.target.value },
+                          }))
+                        }
+                      />
+                      <Textarea
+                        placeholder="Address"
+                        value={invoiceForm.manualCustomer.address}
+                        onChange={(e) =>
+                          setInvoiceForm((current) => ({
+                            ...current,
+                            manualCustomer: { ...current.manualCustomer, address: e.target.value },
+                          }))
+                        }
+                      />
+                    </div>
+                  )}
 
                   <div className="grid gap-4 sm:grid-cols-2">
                     <select
@@ -536,7 +661,19 @@ export default function AdminPageV2() {
                           }))
                         }
                       />
-                      <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                      <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                        <Input
+                          placeholder="HSN code"
+                          value={item.hsnCode}
+                          onChange={(e) =>
+                            setInvoiceForm((current) => ({
+                              ...current,
+                              items: current.items.map((entry, entryIndex) =>
+                                entryIndex === index ? { ...entry, hsnCode: e.target.value } : entry
+                              ),
+                            }))
+                          }
+                        />
                         <Input
                           type="number"
                           placeholder="Quantity"
@@ -620,7 +757,9 @@ export default function AdminPageV2() {
                           {invoice.status}
                         </Badge>
                       </div>
-                      <p className="mt-2 text-sm text-slate-600">{invoice.customer?.name} - {invoice.customer?.phone}</p>
+                      <p className="mt-2 text-sm text-slate-600">
+                        {invoice.customer?.name || invoice.customerDetails?.name} - {invoice.customer?.phone || invoice.customerDetails?.phone || "No phone"}
+                      </p>
                       <p className="mt-1 text-sm font-semibold text-slate-900">
                         Rs. {invoice.totalAmount.toLocaleString("en-IN")}
                       </p>

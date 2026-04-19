@@ -29,6 +29,8 @@ type Invoice = {
   date: string;
 };
 
+const formatInvoiceStatus = (status: string) => status.replace("-", " ");
+
 const statusTone: Record<Booking["status"], string> = {
   pending: "bg-amber-100 text-amber-800",
   "in-progress": "bg-sky-100 text-sky-800",
@@ -280,7 +282,7 @@ export default function CustomerDashboardV3() {
         <Card className="border-border/60 shadow-sm">
           <CardHeader>
             <CardTitle>Invoices</CardTitle>
-            <p className="text-sm text-slate-500">Review billing history and open invoice details.</p>
+            <p className="text-sm text-slate-500">Review billing history with invoice number, date, total amount, and status.</p>
           </CardHeader>
           <CardContent className="space-y-3">
             {loading ? (
@@ -294,25 +296,32 @@ export default function CustomerDashboardV3() {
             ) : (
               invoices.map((invoice) => (
                 <div key={invoice._id} className="rounded-2xl border border-border/70 p-4">
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="grid gap-3 sm:grid-cols-[1.1fr_0.9fr_auto] sm:items-center">
                     <div>
-                      <p className="font-medium text-slate-900">{invoice.invoiceId}</p>
-                      <p className="mt-1 text-sm text-slate-500">
-                        {new Date(invoice.date).toLocaleDateString()}
-                      </p>
+                      <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Invoice ID</p>
+                      <p className="mt-1 font-medium text-slate-900">{invoice.invoiceId}</p>
                     </div>
-                    <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium capitalize text-slate-700">
-                      {invoice.status}
-                    </span>
-                  </div>
-                  <div className="mt-4 flex items-center justify-between">
-                    <p className="text-lg font-semibold text-slate-950">Rs. {invoice.totalAmount.toFixed(2)}</p>
-                    <Button asChild variant="outline" size="sm">
-                      <Link to={`/invoice/${invoice._id}`}>
-                        <FileText className="mr-2 h-4 w-4" />
-                        View
-                      </Link>
-                    </Button>
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Date</p>
+                        <p className="mt-1 text-sm text-slate-700">{new Date(invoice.date).toLocaleDateString("en-IN")}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Total Amount</p>
+                        <p className="mt-1 text-sm font-semibold text-slate-900">Rs. {invoice.totalAmount.toFixed(2)}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-start gap-3 sm:items-end">
+                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium capitalize text-slate-700">
+                        {formatInvoiceStatus(invoice.status)}
+                      </span>
+                      <Button asChild variant="outline" size="sm">
+                        <Link to={`/invoice/${invoice._id}`}>
+                          <FileText className="mr-2 h-4 w-4" />
+                          View
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))

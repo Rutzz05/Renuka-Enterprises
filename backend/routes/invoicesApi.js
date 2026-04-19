@@ -29,15 +29,19 @@ router.get('/', auth, adminAuth, async (_req, res) => {
 
 router.post('/', auth, adminAuth, async (req, res) => {
   try {
-    const { customerId, bookingId, type, items, tax, notes, dueDate, status } = req.body;
+    const { customerId, bookingId, type, items, tax, notes, dueDate, status, customerDetails } = req.body;
 
-    if (!customerId || !type || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ message: 'Customer, type, and at least one invoice item are required' });
+    if ((!customerId && !customerDetails?.name) || !type || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'Customer details, invoice type, and at least one item are required' });
     }
 
-    const customer = await User.findById(customerId);
-    if (!customer) {
-      return res.status(404).json({ message: 'Customer not found' });
+    let selectedCustomer = null;
+
+    if (customerId) {
+      selectedCustomer = await User.findById(customerId);
+      if (!selectedCustomer) {
+        return res.status(404).json({ message: 'Customer not found' });
+      }
     }
 
     const normalizedItems = items.map((item) => {
@@ -46,11 +50,38 @@ router.post('/', auth, adminAuth, async (req, res) => {
 
       return {
         description: item.description?.trim(),
+        hsnCode: item.hsnCode?.trim() || '',
         quantity,
         unitPrice,
         total: Number((quantity * unitPrice).toFixed(2)),
       };
     });
+
+    const invalidItems = normalizedItems.some(
+      (item) => !item.description || Number.isNaN(item.quantity) || Number.isNaN(item.unitPrice) || item.quantity < 1 || item.unitPrice < 0
+    );
+
+    if (invalidItems) {
+      return res.status(400).json({ message: 'Each invoice item must have a description, quantity, and unit price' });
+    }
+
+    const normalizedCustomerDetails = selectedCustomer
+      ? {
+          name: selectedCustomer.name,
+          email: selectedCustomer.email || '',
+          phone: selectedCustomer.phone || '',
+          address: customerDetails?.address?.trim() || '',
+        }
+      : {
+          name: customerDetails?.name?.trim(),
+          email: customerDetails?.email?.trim() || '',
+          phone: customerDetails?.phone?.trim() || '',
+          address: customerDetails?.address?.trim() || '',
+        };
+
+    if (!normalizedCustomerDetails.name) {
+      return res.status(400).json({ message: 'Customer name is required' });
+    }
 
     const subtotal = Number(normalizedItems.reduce((sum, item) => sum + item.total, 0).toFixed(2));
     const taxAmount = Number(tax || 0);
@@ -58,7 +89,8 @@ router.post('/', auth, adminAuth, async (req, res) => {
 
     const invoice = new Invoice({
       invoiceId: `INV-${Date.now()}`,
-      customer: customerId,
+      customer: selectedCustomer?._id || null,
+      customerDetails: normalizedCustomerDetails,
       booking: bookingId || null,
       type,
       items: normalizedItems,
@@ -90,7 +122,7 @@ router.get('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Invoice not found' });
     }
 
-    if (req.user.role !== 'admin' && invoice.customer._id.toString() !== req.user.id) {
+    if (req.user.role !== 'admin' && (!invoice.customer || invoice.customer._id.toString() !== req.user.id)) {
       return res.status(403).json({ message: 'Access denied' });
     }
 

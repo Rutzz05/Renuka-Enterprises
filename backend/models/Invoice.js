@@ -10,7 +10,29 @@ const invoiceSchema = new mongoose.Schema(
     customer: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      default: null,
+    },
+    customerDetails: {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      email: {
+        type: String,
+        trim: true,
+        default: '',
+      },
+      phone: {
+        type: String,
+        trim: true,
+        default: '',
+      },
+      address: {
+        type: String,
+        trim: true,
+        default: '',
+      },
     },
     booking: {
       type: mongoose.Schema.Types.ObjectId,
@@ -28,6 +50,11 @@ const invoiceSchema = new mongoose.Schema(
           type: String,
           required: true,
           trim: true,
+        },
+        hsnCode: {
+          type: String,
+          trim: true,
+          default: '',
         },
         quantity: {
           type: Number,

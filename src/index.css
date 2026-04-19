@@ -104,5 +104,51 @@
   /* Small helper for card/button transitions */
   .transition-smooth { transition: color .18s ease, background-color .18s ease, box-shadow .2s ease, transform .2s ease; }
   .card-elevated { @apply transition-shadow hover:shadow-[var(--card-hover-shadow)] hover:-translate-y-1; }
+
+  .invoice-sheet {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+  }
+
+  .invoice-table th,
+  .invoice-table td {
+    vertical-align: top;
+  }
 }
 
+@media print {
+  body {
+    background: white !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  #invoice-content,
+  #invoice-content * {
+    visibility: visible;
+  }
+
+  #invoice-content {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+
+  .invoice-toolbar {
+    display: none !important;
+  }
+
+  .invoice-sheet {
+    width: 100%;
+    min-height: auto;
+    padding: 0 !important;
+  }
+}

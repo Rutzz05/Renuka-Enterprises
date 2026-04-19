@@ -1,39 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Download, Printer } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import InvoiceDocument, { InvoiceDocumentData } from "@/components/InvoiceDocument";
 import { invoicesAPI } from "@/services/apiClient";
 import { generateInvoicePDF } from "@/services/pdfGenerator";
 
 type InvoiceItem = {
   description: string;
+  hsnCode?: string;
   quantity: number;
   unitPrice: number;
   total: number;
 };
 
-type Invoice = {
+type Invoice = InvoiceDocumentData & {
   _id: string;
-  invoiceId: string;
-  customer?: {
-    name?: string;
-    email?: string;
-    phone?: string;
-  };
-  items: InvoiceItem[];
-  subtotal: number;
-  tax: number;
-  totalAmount: number;
-  status: string;
-  date: string;
 };
 
 export default function InvoicePageV3() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const invoiceRef = useRef<HTMLDivElement | null>(null);
   const [invoice, setInvoice] = useState<Invoice | null>(null);
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
@@ -68,7 +58,10 @@ export default function InvoicePageV3() {
 
     try {
       setDownloading(true);
-      await generateInvoicePDF(invoice);
+      if (!invoiceRef.current) {
+        throw new Error("Invoice content not found");
+      }
+      await generateInvoicePDF(invoiceRef.current, `${invoice.invoiceId}_${new Date(invoice.date).toISOString().split("T")[0]}`);
       toast.success("Invoice PDF downloaded.");
     } catch (error) {
       toast.error("Unable to download PDF right now.");
@@ -90,8 +83,8 @@ export default function InvoicePageV3() {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div className="mx-auto max-w-6xl space-y-6">
+      <div className="invoice-toolbar flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Invoice</p>
           <h1 className="mt-2 font-serif text-3xl font-semibold text-slate-950">{invoice.invoiceId}</h1>
@@ -111,65 +104,9 @@ export default function InvoicePageV3() {
         </div>
       </div>
 
-      <Card id="invoice-content" className="border-border/60 shadow-sm">
-        <CardHeader className="border-b border-border/60 bg-slate-50">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Renuka Enterprises</p>
-              <CardTitle className="mt-2 text-2xl">Billing statement</CardTitle>
-            </div>
-            <div className="text-sm text-slate-600">
-              <p className="font-medium text-slate-900">{invoice.customer?.name || "Customer"}</p>
-              <p>{invoice.customer?.email || "No email available"}</p>
-              <p>{invoice.customer?.phone || "No phone available"}</p>
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-8 p-6">
-          <div className="overflow-hidden rounded-2xl border border-border/70">
-            <table className="w-full text-sm">
-              <thead className="bg-slate-50 text-left text-slate-500">
-                <tr>
-                  <th className="px-4 py-3 font-medium">Description</th>
-                  <th className="px-4 py-3 font-medium">Qty</th>
-                  <th className="px-4 py-3 font-medium">Rate</th>
-                  <th className="px-4 py-3 font-medium text-right">Amount</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoice.items.map((item, index) => (
-                  <tr key={`${item.description}-${index}`} className="border-t border-border/60">
-                    <td className="px-4 py-3 text-slate-700">{item.description}</td>
-                    <td className="px-4 py-3 text-slate-700">{item.quantity}</td>
-                    <td className="px-4 py-3 text-slate-700">Rs. {item.unitPrice.toFixed(2)}</td>
-                    <td className="px-4 py-3 text-right font-medium text-slate-900">
-                      Rs. {item.total.toFixed(2)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="ml-auto max-w-sm space-y-3 rounded-2xl border border-border/70 bg-slate-50 p-5">
-            <div className="flex items-center justify-between text-sm text-slate-600">
-              <span>Subtotal</span>
-              <span>Rs. {invoice.subtotal.toFixed(2)}</span>
-            </div>
-            <div className="flex items-center justify-between text-sm text-slate-600">
-              <span>Tax</span>
-              <span>Rs. {invoice.tax.toFixed(2)}</span>
-            </div>
-            <div className="flex items-center justify-between border-t border-border pt-3 text-base font-semibold text-slate-950">
-              <span>Total</span>
-              <span>Rs. {invoice.totalAmount.toFixed(2)}</span>
-            </div>
-            <div className="pt-2 text-xs uppercase tracking-[0.2em] text-slate-500">
-              Status: {invoice.status}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div ref={invoiceRef} id="invoice-content" className="rounded-[24px] border border-slate-200 bg-white p-4 shadow-sm print:border-0 print:p-0 print:shadow-none">
+        <InvoiceDocument invoice={invoice} />
+      </div>
     </div>
   );
 }

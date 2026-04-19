@@ -2,8 +2,53 @@ const express = require('express');
 const Invoice = require('../models/Invoice');
 const User = require('../models/User');
 const { auth, adminAuth } = require('../middleware/auth');
+const { calculateInvoiceTotals, getFinancialYearRange } = require('../utils/invoice');
 
 const router = express.Router();
+
+const normalizeParty = (party) => ({
+  name: party?.name?.trim() || '',
+  address: party?.address?.trim() || '',
+  phone: party?.phone?.trim() || '',
+  gstin: party?.gstin?.trim() || '',
+  state: party?.state?.trim() || '',
+});
+
+const validateParty = (party, label) => {
+  if (!party.name || !party.address || !party.phone || !party.state) {
+    return `${label} name, address, phone, and state are required`;
+  }
+
+  return null;
+};
+
+const buildCustomerDetails = (selectedCustomer, billTo) => ({
+  name: billTo.name,
+  email: selectedCustomer?.email || '',
+  phone: billTo.phone,
+  address: billTo.address,
+  gstin: billTo.gstin,
+  state: billTo.state,
+});
+
+const buildInvoiceNumber = async (invoiceDate) => {
+  const { start, end, label, monthCode } = getFinancialYearRange(invoiceDate);
+  const existingInvoices = await Invoice.find({
+    invoiceDate: { $gte: start, $lte: end },
+  })
+    .sort({ createdAt: 1 })
+    .select('invoiceId');
+
+  let sequence = existingInvoices.length + 1;
+  let candidate = `${String(sequence).padStart(3, '0')}/${monthCode}/${label}`;
+
+  while (existingInvoices.some((invoice) => invoice.invoiceId === candidate)) {
+    sequence += 1;
+    candidate = `${String(sequence).padStart(3, '0')}/${monthCode}/${label}`;
+  }
+
+  return candidate;
+};
 
 router.get('/my', auth, async (req, res) => {
   try {
@@ -27,12 +72,41 @@ router.get('/', auth, adminAuth, async (_req, res) => {
   }
 });
 
+router.get('/next-number', auth, adminAuth, async (req, res) => {
+  try {
+    const invoiceDate = req.query.invoiceDate ? new Date(req.query.invoiceDate) : new Date();
+    const invoiceId = await buildInvoiceNumber(invoiceDate);
+    return res.json({ invoiceId });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).json({ message: 'Unable to generate the next invoice number' });
+  }
+});
+
 router.post('/', auth, adminAuth, async (req, res) => {
   try {
-    const { customerId, bookingId, type, items, tax, notes, dueDate, status, customerDetails } = req.body;
+    const {
+      customerId,
+      bookingId,
+      type,
+      items,
+      notes,
+      dueDate,
+      status,
+      invoiceDate,
+      dateOfSupply,
+      state,
+      placeOfSupply,
+      reverseCharge,
+      transportMode,
+      vehicleNumber,
+      billTo,
+      shipTo,
+      bankDetails,
+    } = req.body;
 
-    if ((!customerId && !customerDetails?.name) || !type || !Array.isArray(items) || items.length === 0) {
-      return res.status(400).json({ message: 'Customer details, invoice type, and at least one item are required' });
+    if (!type || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ message: 'Invoice type and at least one product row are required' });
     }
 
     let selectedCustomer = null;
@@ -44,61 +118,81 @@ router.post('/', auth, adminAuth, async (req, res) => {
       }
     }
 
-    const normalizedItems = items.map((item) => {
-      const quantity = Number(item.quantity);
-      const unitPrice = Number(item.unitPrice);
+    const normalizedBillTo = normalizeParty(billTo);
+    const normalizedShipToInput = normalizeParty(shipTo);
+    const shipToSameAsBillTo = shipTo?.sameAsBillTo !== false;
+    const normalizedShipTo = shipToSameAsBillTo
+      ? { ...normalizedBillTo, sameAsBillTo: true }
+      : { ...normalizedShipToInput, sameAsBillTo: false };
 
-      return {
-        description: item.description?.trim(),
-        hsnCode: item.hsnCode?.trim() || '',
-        quantity,
-        unitPrice,
-        total: Number((quantity * unitPrice).toFixed(2)),
-      };
-    });
+    const billToError = validateParty(normalizedBillTo, 'Bill to');
+    if (billToError) {
+      return res.status(400).json({ message: billToError });
+    }
 
-    const invalidItems = normalizedItems.some(
-      (item) => !item.description || Number.isNaN(item.quantity) || Number.isNaN(item.unitPrice) || item.quantity < 1 || item.unitPrice < 0
+    const shipToError = validateParty(normalizedShipTo, 'Ship to');
+    if (shipToError) {
+      return res.status(400).json({ message: shipToError });
+    }
+
+    if (!invoiceDate || !dateOfSupply || !state?.trim() || !placeOfSupply?.trim()) {
+      return res.status(400).json({ message: 'Invoice date, date of supply, state, and place of supply are required' });
+    }
+
+    if (!bankDetails?.accountNumber?.trim() || !bankDetails?.ifscCode?.trim()) {
+      return res.status(400).json({ message: 'Bank account number and IFSC code are required' });
+    }
+
+    const totals = calculateInvoiceTotals(items);
+    const invalidItems = totals.items.some(
+      (item) =>
+        !item.description ||
+        Number.isNaN(item.quantity) ||
+        Number.isNaN(item.unitPrice) ||
+        Number.isNaN(item.cgstRate) ||
+        Number.isNaN(item.sgstRate) ||
+        item.quantity <= 0 ||
+        item.unitPrice <= 0
     );
 
     if (invalidItems) {
-      return res.status(400).json({ message: 'Each invoice item must have a description, quantity, and unit price' });
+      return res.status(400).json({ message: 'Each product row must include a name, quantity above 0, rate above 0, and numeric GST rates' });
     }
 
-    const normalizedCustomerDetails = selectedCustomer
-      ? {
-          name: selectedCustomer.name,
-          email: selectedCustomer.email || '',
-          phone: selectedCustomer.phone || '',
-          address: customerDetails?.address?.trim() || '',
-        }
-      : {
-          name: customerDetails?.name?.trim(),
-          email: customerDetails?.email?.trim() || '',
-          phone: customerDetails?.phone?.trim() || '',
-          address: customerDetails?.address?.trim() || '',
-        };
-
-    if (!normalizedCustomerDetails.name) {
-      return res.status(400).json({ message: 'Customer name is required' });
-    }
-
-    const subtotal = Number(normalizedItems.reduce((sum, item) => sum + item.total, 0).toFixed(2));
-    const taxAmount = Number(tax || 0);
-    const totalAmount = Number((subtotal + taxAmount).toFixed(2));
+    const parsedInvoiceDate = new Date(invoiceDate);
+    const invoiceId = await buildInvoiceNumber(parsedInvoiceDate);
 
     const invoice = new Invoice({
-      invoiceId: `INV-${Date.now()}`,
+      invoiceId,
       customer: selectedCustomer?._id || null,
-      customerDetails: normalizedCustomerDetails,
+      customerDetails: buildCustomerDetails(selectedCustomer, normalizedBillTo),
+      invoiceDate: parsedInvoiceDate,
+      dateOfSupply: new Date(dateOfSupply),
+      state: state.trim(),
+      placeOfSupply: placeOfSupply.trim(),
+      reverseCharge: Boolean(reverseCharge),
+      transportMode: transportMode?.trim() || 'By hand',
+      vehicleNumber: vehicleNumber?.trim() || '',
+      billTo: normalizedBillTo,
+      shipTo: normalizedShipTo,
       booking: bookingId || null,
       type,
-      items: normalizedItems,
-      subtotal,
-      tax: taxAmount,
-      totalAmount,
+      items: totals.items,
+      totalBeforeTax: totals.totalBeforeTax,
+      totalCgst: totals.totalCgst,
+      totalSgst: totals.totalSgst,
+      roundOff: totals.roundOff,
+      subtotal: totals.totalBeforeTax,
+      tax: totals.totalCgst + totals.totalSgst,
+      totalAmount: totals.grandTotal,
+      amountInWords: totals.amountInWords,
+      bankDetails: {
+        accountNumber: bankDetails.accountNumber.trim(),
+        ifscCode: bankDetails.ifscCode.trim().toUpperCase(),
+      },
       notes: notes?.trim() || '',
       dueDate: dueDate || null,
+      date: parsedInvoiceDate,
       status: status === 'paid' ? 'paid' : 'generated',
     });
 

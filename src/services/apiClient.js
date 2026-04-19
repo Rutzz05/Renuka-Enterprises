@@ -54,6 +54,7 @@ export const productsAPI = {
 };
 
 export const invoicesAPI = {
+  getNextInvoiceNumber: (invoiceDate) => api.get('/invoices/next-number', { params: { invoiceDate } }),
   getMyInvoices: () => api.get('/invoices/my'),
   getAllInvoices: () => api.get('/invoices'),
   createInvoice: (invoiceData) => api.post('/invoices', invoiceData),

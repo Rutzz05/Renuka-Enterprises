@@ -1,29 +1,55 @@
+import { formatCurrency, numberToWords } from "@/lib/invoice";
+
 type InvoiceItem = {
   description: string;
   hsnCode?: string;
   quantity: number;
   unitPrice: number;
+  amount?: number;
+  cgstRate?: number;
+  sgstRate?: number;
+  cgstAmount?: number;
+  sgstAmount?: number;
   total: number;
 };
 
-type InvoiceCustomerDetails = {
+type InvoiceParty = {
   name?: string;
   email?: string;
   phone?: string;
   address?: string;
+  gstin?: string;
+  state?: string;
 };
 
 export type InvoiceDocumentData = {
   invoiceId: string;
-  date: string;
-  dueDate?: string | null;
+  invoiceDate?: string;
+  date?: string;
+  dateOfSupply?: string;
   status: string;
-  customer?: InvoiceCustomerDetails;
-  customerDetails?: InvoiceCustomerDetails;
+  state?: string;
+  placeOfSupply?: string;
+  reverseCharge?: boolean;
+  transportMode?: string;
+  vehicleNumber?: string;
+  customer?: InvoiceParty;
+  customerDetails?: InvoiceParty;
+  billTo?: InvoiceParty;
+  shipTo?: InvoiceParty & { sameAsBillTo?: boolean };
   items: InvoiceItem[];
+  totalBeforeTax?: number;
+  totalCgst?: number;
+  totalSgst?: number;
+  roundOff?: number;
   subtotal: number;
   tax: number;
   totalAmount: number;
+  amountInWords?: string;
+  bankDetails?: {
+    accountNumber?: string;
+    ifscCode?: string;
+  };
   notes?: string;
 };
 
@@ -45,66 +71,14 @@ const formatDate = (value?: string | null) =>
       })
     : "";
 
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("en-IN", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(value);
-
-const numberToWords = (value: number) => {
-  const ones = [
-    "",
-    "One",
-    "Two",
-    "Three",
-    "Four",
-    "Five",
-    "Six",
-    "Seven",
-    "Eight",
-    "Nine",
-    "Ten",
-    "Eleven",
-    "Twelve",
-    "Thirteen",
-    "Fourteen",
-    "Fifteen",
-    "Sixteen",
-    "Seventeen",
-    "Eighteen",
-    "Nineteen",
-  ];
-  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-
-  const convertBelowThousand = (num: number): string => {
-    if (num < 20) return ones[num];
-    if (num < 100) return `${tens[Math.floor(num / 10)]}${num % 10 ? ` ${ones[num % 10]}` : ""}`.trim();
-    return `${ones[Math.floor(num / 100)]} Hundred${num % 100 ? ` ${convertBelowThousand(num % 100)}` : ""}`.trim();
-  };
-
-  const integer = Math.round(value);
-  if (integer === 0) return "Zero";
-
-  const crore = Math.floor(integer / 10000000);
-  const lakh = Math.floor((integer % 10000000) / 100000);
-  const thousand = Math.floor((integer % 100000) / 1000);
-  const remainder = integer % 1000;
-
-  return [
-    crore ? `${convertBelowThousand(crore)} Crore` : "",
-    lakh ? `${convertBelowThousand(lakh)} Lakh` : "",
-    thousand ? `${convertBelowThousand(thousand)} Thousand` : "",
-    remainder ? convertBelowThousand(remainder) : "",
-  ]
-    .filter(Boolean)
-    .join(" ")
-    .trim();
-};
-
 export default function InvoiceDocument({ invoice }: { invoice: InvoiceDocumentData }) {
-  const customer = invoice.customerDetails || invoice.customer || {};
-  const cgstAmount = invoice.tax / 2;
-  const sgstAmount = invoice.tax / 2;
+  const billTo = invoice.billTo || invoice.customerDetails || invoice.customer || {};
+  const shipTo = invoice.shipTo || billTo;
+  const totalBeforeTax = invoice.totalBeforeTax ?? invoice.subtotal;
+  const totalCgst = invoice.totalCgst ?? invoice.tax / 2;
+  const totalSgst = invoice.totalSgst ?? invoice.tax / 2;
+  const invoiceDate = invoice.invoiceDate || invoice.date;
+  const amountInWords = invoice.amountInWords || numberToWords(invoice.totalAmount);
 
   return (
     <div className="invoice-sheet bg-white p-6 text-[12px] text-slate-900">
@@ -139,15 +113,15 @@ export default function InvoiceDocument({ invoice }: { invoice: InvoiceDocumentD
         <div className="grid grid-cols-2 border-b border-slate-400 text-[12px]">
           <div className="space-y-1 border-r border-slate-400 px-3 py-3">
             <p>Invoice No: {invoice.invoiceId}</p>
-            <p>Invoice date: {formatDate(invoice.date)}</p>
-            <p>Reverse Charge (Y/N): N</p>
-            <p>State: {COMPANY.state}</p>
+            <p>Invoice date: {formatDate(invoiceDate)}</p>
+            <p>Reverse Charge (Y/N): {invoice.reverseCharge ? "Y" : "N"}</p>
+            <p>State: {invoice.state || COMPANY.state}</p>
           </div>
           <div className="space-y-1 px-3 py-3">
-            <p>Transport Mode: By hand</p>
-            <p>Vehicle number:</p>
-            <p>Date of Supply: {formatDate(invoice.date)}</p>
-            <p>Place of Supply: Nashik</p>
+            <p>Transport Mode: {invoice.transportMode || "By hand"}</p>
+            <p>Vehicle number: {invoice.vehicleNumber || "-"}</p>
+            <p>Date of Supply: {formatDate(invoice.dateOfSupply || invoiceDate)}</p>
+            <p>Place of Supply: {invoice.placeOfSupply || "Nashik"}</p>
           </div>
         </div>
 
@@ -155,21 +129,21 @@ export default function InvoiceDocument({ invoice }: { invoice: InvoiceDocumentD
           <div className="border-r border-slate-400">
             <div className="border-b border-slate-400 bg-sky-100 px-3 py-1 text-center font-semibold">Bill to Party</div>
             <div className="space-y-2 px-3 py-3">
-              <p>Name: {customer.name || "Customer"}</p>
-              <p>Address: {customer.address || "-"}</p>
-              <p>Phone: {customer.phone || "-"}</p>
-              <p>GSTIN: -</p>
-              <p>State: {COMPANY.state.toUpperCase()}</p>
+              <p>Name: {billTo.name || "Customer"}</p>
+              <p>Address: {billTo.address || "-"}</p>
+              <p>Phone: {billTo.phone || "-"}</p>
+              <p>GSTIN: {billTo.gstin || "-"}</p>
+              <p>State: {billTo.state || COMPANY.state.toUpperCase()}</p>
             </div>
           </div>
           <div>
             <div className="border-b border-slate-400 bg-sky-100 px-3 py-1 text-center font-semibold">Ship to Party</div>
             <div className="space-y-2 px-3 py-3">
-              <p>Name: {customer.name || "Customer"}</p>
-              <p>Address: {customer.address || "Nashik City"}</p>
-              <p>Phone: {customer.phone || "-"}</p>
-              <p>GSTIN: -</p>
-              <p>State: {COMPANY.state}</p>
+              <p>Name: {shipTo.name || "Customer"}</p>
+              <p>Address: {shipTo.address || "-"}</p>
+              <p>Phone: {shipTo.phone || "-"}</p>
+              <p>GSTIN: {shipTo.gstin || "-"}</p>
+              <p>State: {shipTo.state || COMPANY.state}</p>
             </div>
           </div>
         </div>
@@ -190,10 +164,10 @@ export default function InvoiceDocument({ invoice }: { invoice: InvoiceDocumentD
           </thead>
           <tbody>
             {invoice.items.map((item, index) => {
-              const itemTaxShare = invoice.subtotal > 0 ? (item.total / invoice.subtotal) * invoice.tax : 0;
-              const itemCgst = itemTaxShare / 2;
-              const itemSgst = itemTaxShare / 2;
-              const itemGrandTotal = item.total + itemTaxShare;
+              const itemAmount = item.amount ?? item.quantity * item.unitPrice;
+              const itemCgst = item.cgstAmount ?? 0;
+              const itemSgst = item.sgstAmount ?? 0;
+              const itemGrandTotal = item.total;
 
               return (
                 <tr key={`${item.description}-${index}`} className="align-top">
@@ -204,7 +178,7 @@ export default function InvoiceDocument({ invoice }: { invoice: InvoiceDocumentD
                   <td className="border-r border-t border-slate-300 px-2 py-2 text-center">{item.hsnCode || "-"}</td>
                   <td className="border-r border-t border-slate-300 px-2 py-2 text-center">{item.quantity}</td>
                   <td className="border-r border-t border-slate-300 px-2 py-2 text-right">{formatCurrency(item.unitPrice)}</td>
-                  <td className="border-r border-t border-slate-300 px-2 py-2 text-right">{formatCurrency(item.total)}</td>
+                  <td className="border-r border-t border-slate-300 px-2 py-2 text-right">{formatCurrency(itemAmount)}</td>
                   <td className="border-r border-t border-slate-300 px-2 py-2 text-right">{formatCurrency(itemCgst)}</td>
                   <td className="border-r border-t border-slate-300 px-2 py-2 text-right">{formatCurrency(itemSgst)}</td>
                   <td className="border-t border-slate-300 px-2 py-2 text-right">{formatCurrency(itemGrandTotal)}</td>
@@ -219,7 +193,7 @@ export default function InvoiceDocument({ invoice }: { invoice: InvoiceDocumentD
             <div className="grid gap-2">
               <div className="grid grid-cols-[190px_1fr] gap-3">
                 <span>Total Invoice amount in words</span>
-                <span className="font-medium">Rs:-{numberToWords(invoice.totalAmount)} Rupees only</span>
+                <span className="font-medium">Rs:-{amountInWords}</span>
               </div>
               <div className="grid grid-cols-[190px_1fr] gap-3">
                 <span>Terms &amp; conditions</span>
@@ -233,13 +207,13 @@ export default function InvoiceDocument({ invoice }: { invoice: InvoiceDocumentD
           <div className="px-3 py-3">
             <div className="grid grid-cols-[1fr_120px] gap-y-2">
               <span>Total Amount before Tax</span>
-              <span className="text-right">{formatCurrency(invoice.subtotal)}</span>
+              <span className="text-right">{formatCurrency(totalBeforeTax)}</span>
               <span>Add: CGST + SGST</span>
-              <span className="text-right">{formatCurrency(cgstAmount + sgstAmount)}</span>
+              <span className="text-right">{formatCurrency(totalCgst + totalSgst)}</span>
               <span>GST on Reverse Charge</span>
               <span className="text-right">0.00</span>
               <span>Round OFF</span>
-              <span className="text-right">0.00</span>
+              <span className="text-right">{formatCurrency(invoice.roundOff || 0)}</span>
               <span className="border-t border-slate-400 pt-2 font-semibold">Total</span>
               <span className="border-t border-slate-400 pt-2 text-right font-semibold">{formatCurrency(invoice.totalAmount)}</span>
             </div>
@@ -249,8 +223,8 @@ export default function InvoiceDocument({ invoice }: { invoice: InvoiceDocumentD
         <div className="grid grid-cols-[1fr_220px]">
           <div className="border-r border-slate-400 px-3 py-4">
             <p className="font-semibold">Bank Details</p>
-            <p className="mt-2">Bank A/C: --------------</p>
-            <p>Bank IFSC: ABHY0065115</p>
+            <p className="mt-2">Bank A/C: {invoice.bankDetails?.accountNumber || "--------------"}</p>
+            <p>Bank IFSC: {invoice.bankDetails?.ifscCode || "ABHY0065115"}</p>
             <p className="mt-6 text-[11px]">Thank You For Your Business!</p>
           </div>
           <div className="px-3 py-4">

@@ -33,6 +33,108 @@ const invoiceSchema = new mongoose.Schema(
         trim: true,
         default: '',
       },
+      gstin: {
+        type: String,
+        trim: true,
+        default: '',
+      },
+      state: {
+        type: String,
+        trim: true,
+        default: '',
+      },
+    },
+    invoiceDate: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
+    dateOfSupply: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
+    state: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    placeOfSupply: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    reverseCharge: {
+      type: Boolean,
+      default: false,
+    },
+    transportMode: {
+      type: String,
+      trim: true,
+      default: 'By hand',
+    },
+    vehicleNumber: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+    billTo: {
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      address: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      phone: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      gstin: {
+        type: String,
+        trim: true,
+        default: '',
+      },
+      state: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+    },
+    shipTo: {
+      sameAsBillTo: {
+        type: Boolean,
+        default: true,
+      },
+      name: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      address: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      phone: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      gstin: {
+        type: String,
+        trim: true,
+        default: '',
+      },
+      state: {
+        type: String,
+        required: true,
+        trim: true,
+      },
     },
     booking: {
       type: mongoose.Schema.Types.ObjectId,
@@ -66,6 +168,31 @@ const invoiceSchema = new mongoose.Schema(
           required: true,
           min: 0,
         },
+        amount: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        cgstRate: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        sgstRate: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        cgstAmount: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
+        sgstAmount: {
+          type: Number,
+          required: true,
+          min: 0,
+        },
         total: {
           type: Number,
           required: true,
@@ -73,6 +200,25 @@ const invoiceSchema = new mongoose.Schema(
         },
       },
     ],
+    totalBeforeTax: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    totalCgst: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    totalSgst: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    roundOff: {
+      type: Number,
+      default: 0,
+    },
     subtotal: {
       type: Number,
       required: true,
@@ -88,6 +234,23 @@ const invoiceSchema = new mongoose.Schema(
       required: true,
       min: 0,
     },
+    amountInWords: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    bankDetails: {
+      accountNumber: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+      ifscCode: {
+        type: String,
+        required: true,
+        trim: true,
+      },
+    },
     notes: {
       type: String,
       trim: true,
@@ -99,7 +262,7 @@ const invoiceSchema = new mongoose.Schema(
     },
     date: {
       type: Date,
-      default: Date.now,
+      default: null,
     },
     status: {
       type: String,

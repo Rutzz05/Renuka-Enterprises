@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Boxes, ClipboardList, FileText, Loader2, LogOut, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import AdminInvoicePanel from "@/components/AdminInvoicePanel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,19 +26,6 @@ const emptyProductForm = {
   image: "",
 };
 
-const createEmptyInvoiceItem = () => ({
-  description: "",
-  hsnCode: "",
-  quantity: "1",
-  unitPrice: "0",
-});
-
-const emptyManualCustomer = {
-  name: "",
-  phone: "",
-  address: "",
-};
-
 export default function AdminPageV2() {
   const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState<DashboardTab>("bookings");
@@ -49,19 +37,6 @@ export default function AdminPageV2() {
   const [busyKey, setBusyKey] = useState<string | null>(null);
 
   const [productForm, setProductForm] = useState(emptyProductForm);
-  const [invoiceForm, setInvoiceForm] = useState({
-    customerMode: "existing",
-    customerId: "",
-    bookingId: "",
-    type: "service",
-    tax: "0",
-    dueDate: "",
-    notes: "",
-    status: "generated",
-    manualCustomer: emptyManualCustomer,
-    items: [createEmptyInvoiceItem()],
-  });
-
   const loadDashboard = async () => {
     setLoading(true);
 
@@ -87,25 +62,6 @@ export default function AdminPageV2() {
   useEffect(() => {
     loadDashboard();
   }, []);
-
-  const bookingOptionsForCustomer = useMemo(
-    () => bookings.filter((booking) => booking.customer?._id === invoiceForm.customerId),
-    [bookings, invoiceForm.customerId]
-  );
-
-  const invoicePreview = useMemo(() => {
-    const subtotal = invoiceForm.items.reduce((sum, item) => {
-      const quantity = Number(item.quantity || 0);
-      const unitPrice = Number(item.unitPrice || 0);
-      return sum + quantity * unitPrice;
-    }, 0);
-    const tax = Number(invoiceForm.tax || 0);
-
-    return {
-      subtotal,
-      total: subtotal + tax,
-    };
-  }, [invoiceForm.items, invoiceForm.tax]);
 
   const startBusy = (key: string) => setBusyKey(key);
   const stopBusy = () => setBusyKey(null);
@@ -179,83 +135,6 @@ export default function AdminPageV2() {
       await loadDashboard();
     } catch (_error) {
       toast.error("Unable to delete this booking.");
-    } finally {
-      stopBusy();
-    }
-  };
-
-  const submitInvoice = async (event: React.FormEvent) => {
-    event.preventDefault();
-    startBusy("invoice-form");
-
-    try {
-      // Validate that all items have description and unitPrice > 0
-      const invalidItems = invoiceForm.items.filter(
-        (item) => !item.description.trim() || Number(item.unitPrice || 0) <= 0
-      );
-      if (invalidItems.length > 0) {
-        toast.error("Please complete each item and keep unit prices above 0.");
-        stopBusy();
-        return;
-      }
-
-      if (invoiceForm.customerMode === "existing" && !invoiceForm.customerId) {
-        toast.error("Please select an existing customer.");
-        stopBusy();
-        return;
-      }
-
-      if (
-        invoiceForm.customerMode === "manual" &&
-        (!invoiceForm.manualCustomer.name.trim() || !invoiceForm.manualCustomer.phone.trim())
-      ) {
-        toast.error("Please enter the manual customer name and phone number.");
-        stopBusy();
-        return;
-      }
-
-      await invoicesAPI.createInvoice({
-        customerId: invoiceForm.customerMode === "existing" ? invoiceForm.customerId : null,
-        bookingId: invoiceForm.customerMode === "existing" ? invoiceForm.bookingId || null : null,
-        type: invoiceForm.type,
-        tax: Number(invoiceForm.tax || 0),
-        dueDate: invoiceForm.dueDate || null,
-        notes: invoiceForm.notes,
-        status: invoiceForm.status,
-        customerDetails:
-          invoiceForm.customerMode === "manual"
-            ? {
-                name: invoiceForm.manualCustomer.name,
-                phone: invoiceForm.manualCustomer.phone,
-                address: invoiceForm.manualCustomer.address,
-              }
-            : {
-                address: invoiceForm.manualCustomer.address,
-              },
-        items: invoiceForm.items.map((item) => ({
-          description: item.description,
-          hsnCode: item.hsnCode,
-          quantity: Number(item.quantity),
-          unitPrice: Number(item.unitPrice),
-        })),
-      });
-
-      setInvoiceForm({
-        customerMode: "existing",
-        customerId: "",
-        bookingId: "",
-        type: "service",
-        tax: "0",
-        dueDate: "",
-        notes: "",
-        status: "generated",
-        manualCustomer: emptyManualCustomer,
-        items: [createEmptyInvoiceItem()],
-      });
-      toast.success("Invoice created successfully.");
-      await loadDashboard();
-    } catch (_error) {
-      toast.error("Unable to create invoice.");
     } finally {
       stopBusy();
     }
@@ -508,243 +387,7 @@ export default function AdminPageV2() {
 
         {activeTab === "invoices" && (
           <div className="mt-6 grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-            <Card className="rounded-[28px] border-0 shadow-[0_24px_70px_-45px_rgba(15,23,42,0.5)]">
-              <CardHeader className="p-6">
-                <CardTitle className="text-2xl">Create invoice</CardTitle>
-              </CardHeader>
-              <CardContent className="p-6 pt-0">
-                <form onSubmit={submitInvoice} className="space-y-4">
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <button
-                      type="button"
-                      className={`rounded-2xl border px-4 py-3 text-left transition ${
-                        invoiceForm.customerMode === "existing"
-                          ? "border-primary bg-primary/5 text-slate-900"
-                          : "border-border bg-background text-slate-600"
-                      }`}
-                      onClick={() =>
-                        setInvoiceForm((current) => ({
-                          ...current,
-                          customerMode: "existing",
-                          bookingId: "",
-                        }))
-                      }
-                    >
-                      <p className="font-semibold">Select existing customer</p>
-                      <p className="mt-1 text-sm text-slate-500">Link this invoice to a registered customer.</p>
-                    </button>
-                    <button
-                      type="button"
-                      className={`rounded-2xl border px-4 py-3 text-left transition ${
-                        invoiceForm.customerMode === "manual"
-                          ? "border-primary bg-primary/5 text-slate-900"
-                          : "border-border bg-background text-slate-600"
-                      }`}
-                      onClick={() =>
-                        setInvoiceForm((current) => ({
-                          ...current,
-                          customerMode: "manual",
-                          customerId: "",
-                          bookingId: "",
-                        }))
-                      }
-                    >
-                      <p className="font-semibold">Enter customer manually</p>
-                      <p className="mt-1 text-sm text-slate-500">Use this for walk-in or offline customers.</p>
-                    </button>
-                  </div>
-
-                  {invoiceForm.customerMode === "existing" ? (
-                    <>
-                      <select
-                        value={invoiceForm.customerId}
-                        onChange={(e) => setInvoiceForm((current) => ({ ...current, customerId: e.target.value, bookingId: "" }))}
-                        className="h-11 w-full rounded-xl border bg-background px-3 text-sm"
-                      >
-                        <option value="">Select customer</option>
-                        {customers.map((customer) => (
-                          <option key={customer.id} value={customer.id}>
-                            {customer.name} - {customer.phone}
-                          </option>
-                        ))}
-                      </select>
-
-                      <select
-                        value={invoiceForm.bookingId}
-                        onChange={(e) => setInvoiceForm((current) => ({ ...current, bookingId: e.target.value }))}
-                        className="h-11 w-full rounded-xl border bg-background px-3 text-sm"
-                      >
-                        <option value="">Link booking (optional)</option>
-                        {bookingOptionsForCustomer.map((booking) => (
-                          <option key={booking._id} value={booking._id}>
-                            {booking.issueType} - {new Date(booking.preferredDate).toLocaleDateString("en-IN")}
-                          </option>
-                        ))}
-                      </select>
-
-                      <Input
-                        placeholder="Address for invoice (optional)"
-                        value={invoiceForm.manualCustomer.address}
-                        onChange={(e) =>
-                          setInvoiceForm((current) => ({
-                            ...current,
-                            manualCustomer: { ...current.manualCustomer, address: e.target.value },
-                          }))
-                        }
-                      />
-                    </>
-                  ) : (
-                    <div className="grid gap-4">
-                      <Input
-                        placeholder="Customer name"
-                        value={invoiceForm.manualCustomer.name}
-                        onChange={(e) =>
-                          setInvoiceForm((current) => ({
-                            ...current,
-                            manualCustomer: { ...current.manualCustomer, name: e.target.value },
-                          }))
-                        }
-                      />
-                      <Input
-                        placeholder="Phone number"
-                        value={invoiceForm.manualCustomer.phone}
-                        onChange={(e) =>
-                          setInvoiceForm((current) => ({
-                            ...current,
-                            manualCustomer: { ...current.manualCustomer, phone: e.target.value },
-                          }))
-                        }
-                      />
-                      <Textarea
-                        placeholder="Address"
-                        value={invoiceForm.manualCustomer.address}
-                        onChange={(e) =>
-                          setInvoiceForm((current) => ({
-                            ...current,
-                            manualCustomer: { ...current.manualCustomer, address: e.target.value },
-                          }))
-                        }
-                      />
-                    </div>
-                  )}
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <select
-                      value={invoiceForm.type}
-                      onChange={(e) => setInvoiceForm((current) => ({ ...current, type: e.target.value }))}
-                      className="h-11 rounded-xl border bg-background px-3 text-sm"
-                    >
-                      <option value="service">Service</option>
-                      <option value="product">Product</option>
-                    </select>
-                    <select
-                      value={invoiceForm.status}
-                      onChange={(e) => setInvoiceForm((current) => ({ ...current, status: e.target.value }))}
-                      className="h-11 rounded-xl border bg-background px-3 text-sm"
-                    >
-                      <option value="generated">Generated</option>
-                      <option value="paid">Paid</option>
-                    </select>
-                  </div>
-
-                  {invoiceForm.items.map((item, index) => (
-                    <div key={index} className="rounded-2xl border bg-slate-50/80 p-4">
-                      <Input
-                        placeholder="Item description"
-                        value={item.description}
-                        onChange={(e) =>
-                          setInvoiceForm((current) => ({
-                            ...current,
-                            items: current.items.map((entry, entryIndex) =>
-                              entryIndex === index ? { ...entry, description: e.target.value } : entry
-                            ),
-                          }))
-                        }
-                      />
-                      <div className="mt-3 grid gap-3 sm:grid-cols-3">
-                        <Input
-                          placeholder="HSN code"
-                          value={item.hsnCode}
-                          onChange={(e) =>
-                            setInvoiceForm((current) => ({
-                              ...current,
-                              items: current.items.map((entry, entryIndex) =>
-                                entryIndex === index ? { ...entry, hsnCode: e.target.value } : entry
-                              ),
-                            }))
-                          }
-                        />
-                        <Input
-                          type="number"
-                          placeholder="Quantity"
-                          value={item.quantity}
-                          onChange={(e) =>
-                            setInvoiceForm((current) => ({
-                              ...current,
-                              items: current.items.map((entry, entryIndex) =>
-                                entryIndex === index ? { ...entry, quantity: e.target.value } : entry
-                              ),
-                            }))
-                          }
-                        />
-                        <Input
-                          type="number"
-                          placeholder="Unit price"
-                          value={item.unitPrice}
-                          onChange={(e) =>
-                            setInvoiceForm((current) => ({
-                              ...current,
-                              items: current.items.map((entry, entryIndex) =>
-                                entryIndex === index ? { ...entry, unitPrice: e.target.value } : entry
-                              ),
-                            }))
-                          }
-                        />
-                      </div>
-                    </div>
-                  ))}
-
-                  <div className="flex gap-3">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setInvoiceForm((current) => ({ ...current, items: [...current.items, createEmptyInvoiceItem()] }))}
-                    >
-                      <Plus className="mr-2 h-4 w-4" />
-                      Add item
-                    </Button>
-                    {invoiceForm.items.length > 1 && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() =>
-                          setInvoiceForm((current) => ({ ...current, items: current.items.slice(0, -1) }))
-                        }
-                      >
-                        Remove last item
-                      </Button>
-                    )}
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Input type="number" placeholder="Tax" value={invoiceForm.tax} onChange={(e) => setInvoiceForm((current) => ({ ...current, tax: e.target.value }))} />
-                    <Input type="date" value={invoiceForm.dueDate} onChange={(e) => setInvoiceForm((current) => ({ ...current, dueDate: e.target.value }))} />
-                  </div>
-
-                  <Textarea placeholder="Invoice notes" value={invoiceForm.notes} onChange={(e) => setInvoiceForm((current) => ({ ...current, notes: e.target.value }))} />
-
-                  <div className="rounded-2xl border border-dashed bg-primary/[0.03] p-4 text-sm">
-                    <p className="font-semibold text-slate-900">Invoice preview</p>
-                    <p className="mt-2 text-slate-600">Subtotal: Rs. {invoicePreview.subtotal.toLocaleString("en-IN")}</p>
-                    <p className="mt-1 text-slate-600">Total: Rs. {invoicePreview.total.toLocaleString("en-IN")}</p>
-                  </div>
-
-                  <Button type="submit" disabled={busyKey === "invoice-form"}>
-                    Create invoice
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+            <AdminInvoicePanel customers={customers} bookings={bookings} onCreated={loadDashboard} />
 
             <div className="grid gap-4">
               {invoices.map((invoice) => (
@@ -758,7 +401,7 @@ export default function AdminPageV2() {
                         </Badge>
                       </div>
                       <p className="mt-2 text-sm text-slate-600">
-                        {invoice.customer?.name || invoice.customerDetails?.name} - {invoice.customer?.phone || invoice.customerDetails?.phone || "No phone"}
+                        {invoice.billTo?.name || invoice.customer?.name || invoice.customerDetails?.name} - {invoice.billTo?.phone || invoice.customer?.phone || invoice.customerDetails?.phone || "No phone"}
                       </p>
                       <p className="mt-1 text-sm font-semibold text-slate-900">
                         Rs. {invoice.totalAmount.toLocaleString("en-IN")}

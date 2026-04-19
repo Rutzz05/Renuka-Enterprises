@@ -8,14 +8,6 @@ import InvoiceDocument, { InvoiceDocumentData } from "@/components/InvoiceDocume
 import { invoicesAPI } from "@/services/apiClient";
 import { generateInvoicePDF } from "@/services/pdfGenerator";
 
-type InvoiceItem = {
-  description: string;
-  hsnCode?: string;
-  quantity: number;
-  unitPrice: number;
-  total: number;
-};
-
 type Invoice = InvoiceDocumentData & {
   _id: string;
 };
@@ -61,7 +53,8 @@ export default function InvoicePageV3() {
       if (!invoiceRef.current) {
         throw new Error("Invoice content not found");
       }
-      await generateInvoicePDF(invoiceRef.current, `${invoice.invoiceId}_${new Date(invoice.date).toISOString().split("T")[0]}`);
+      const invoiceDate = invoice.invoiceDate || invoice.date || new Date().toISOString();
+      await generateInvoicePDF(invoiceRef.current, `${invoice.invoiceId}_${new Date(invoiceDate).toISOString().split("T")[0]}`);
       toast.success("Invoice PDF downloaded.");
     } catch (error) {
       toast.error("Unable to download PDF right now.");
@@ -89,7 +82,7 @@ export default function InvoicePageV3() {
           <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Invoice</p>
           <h1 className="mt-2 font-serif text-3xl font-semibold text-slate-950">{invoice.invoiceId}</h1>
           <p className="mt-2 text-sm text-slate-500">
-            Issued on {new Date(invoice.date).toLocaleDateString()}
+            Issued on {new Date(invoice.invoiceDate || invoice.date || new Date().toISOString()).toLocaleDateString()}
           </p>
         </div>
         <div className="flex flex-wrap gap-3">

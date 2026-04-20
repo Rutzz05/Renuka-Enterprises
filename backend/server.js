@@ -6,51 +6,38 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
-const allowedOrigins = (process.env.CLIENT_URLS || 'http://localhost:8080,http://localhost:8081,http://localhost:5173')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
 
-const originMatchers = allowedOrigins.map((pattern) => {
-  if (!pattern.includes('*')) {
-    return { pattern, regex: null };
-  }
+// ✅ CORS FIX (ONLY THIS VERSION — no duplicates)
+app.use(cors({
+  origin: "https://renukaenterprises.co.in",
+  credentials: true
+}));
 
-  const escapedPattern = pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*');
-  return { pattern, regex: new RegExp(`^${escapedPattern}$`) };
-});
+// ✅ Handle preflight requests
+app.options("*", cors());
 
-const isOriginAllowed = (origin) =>
-  originMatchers.some(({ pattern, regex }) => (regex ? regex.test(origin) : pattern === origin));
-
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || isOriginAllowed(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error('Origin not allowed by CORS'));
-    },
-    credentials: true,
-  })
-);
+// ✅ Middleware
 app.use(express.json({ limit: '1mb' }));
 
+const PORT = process.env.PORT || 5000;
+
+// ✅ Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });
 });
 
+// ✅ Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/bookings', require('./routes/bookingsApi'));
 app.use('/api/products', require('./routes/productsApi'));
 app.use('/api/invoices', require('./routes/invoicesApi'));
 
+// ❌ 404 handler
 app.use((req, res) => {
   res.status(404).json({ message: `Route not found: ${req.method} ${req.originalUrl}` });
 });
 
+// ❌ Error handler
 app.use((err, _req, res, _next) => {
   console.error(err);
 
@@ -61,6 +48,7 @@ app.use((err, _req, res, _next) => {
   return res.status(500).json({ message: 'Internal server error' });
 });
 
+// ✅ Start server
 const startServer = async () => {
   if (!process.env.MONGODB_URI) {
     throw new Error('MONGODB_URI is required');

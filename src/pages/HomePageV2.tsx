@@ -18,25 +18,34 @@ import { useAuth } from "@/contexts/AuthContext";
 
 const PHONE = "+919823021804";
 
+const homeImages = {
+  purifierKitchen: "https://images.unsplash.com/photo-1662647343432-a8710bfd6162?auto=format&fit=crop&w=1400&q=80",
+  purifierProduct: "https://images.unsplash.com/photo-1662460149330-dc1780e5f6bd?auto=format&fit=crop&w=1400&q=80",
+  purifierClose: "https://images.unsplash.com/photo-1662460150087-541eed218e0b?auto=format&fit=crop&w=1400&q=80",
+  serviceTechnician: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1400&q=80",
+  backupPower: "https://images.unsplash.com/photo-1595397210491-957770d2568a?auto=format&fit=crop&w=1400&q=80",
+  batterySystem: "https://images.unsplash.com/photo-1742899273038-67ff67477663?auto=format&fit=crop&w=1400&q=80",
+};
+
 const heroSlides = [
   {
-    src: "/photos/1.jpg",
-    alt: "Aquaguard water purifier installed in a modern kitchen",
+    src: homeImages.purifierKitchen,
+    alt: "Modern water purifier setup in a clean kitchen",
     label: "Aquaguard Sales & Service",
   },
   {
-    src: "/photos/2.jpeg",
-    alt: "Technician holding Aquaguard water purifier for home service",
+    src: homeImages.serviceTechnician,
+    alt: "Technician checking electrical service equipment",
     label: "Home Service Visits",
   },
   {
-    src: "/photos/7.jpeg",
-    alt: "Inverter and battery backup setup",
+    src: homeImages.backupPower,
+    alt: "Backup power equipment for reliable electricity",
     label: "Inverter Support",
   },
   {
-    src: "/photos/5.jpg",
-    alt: "Inverter with tubular batteries",
+    src: homeImages.batterySystem,
+    alt: "Battery backup system for power storage",
     label: "Battery Replacement",
   },
 ];
@@ -46,19 +55,19 @@ const services = [
     title: "Aquaguard service",
     description: "Installation, filter change, leakage repair, maintenance, and purifier support.",
     icon: Droplets,
-    image: "/photos/4.jpeg",
+    image: homeImages.purifierProduct,
   },
   {
     title: "Inverter service",
     description: "Repair, backup issues, charging problems, and routine checks for power systems.",
     icon: BatteryCharging,
-    image: "/photos/7.jpeg",
+    image: homeImages.backupPower,
   },
   {
     title: "Battery support",
     description: "Battery health checks, replacement guidance, and reliable backup support.",
     icon: ShieldCheck,
-    image: "/photos/6.webp",
+    image: homeImages.batterySystem,
   },
 ];
 
@@ -68,6 +77,20 @@ const trustPoints = [
   { label: "Quick help", detail: "Call and WhatsApp support", icon: PhoneCall },
   { label: "AMC support", detail: "Regular maintenance plans", icon: Wrench },
 ];
+
+function HomePhoto({ src, alt, className }: { src: string; alt: string; className: string }) {
+  const [imageSrc, setImageSrc] = useState(src);
+
+  return (
+    <img
+      src={imageSrc}
+      alt={alt}
+      className={className}
+      loading="lazy"
+      onError={() => setImageSrc("/placeholder.svg")}
+    />
+  );
+}
 
 export default function HomePageV2() {
   const { user } = useAuth();
@@ -147,7 +170,7 @@ export default function HomePageV2() {
               >
                 {heroSlides.map((slide) => (
                   <div key={slide.src} className="relative h-[320px] min-w-full sm:h-[420px] lg:h-[500px]">
-                    <img src={slide.src} alt={slide.alt} className="h-full w-full object-cover" />
+                    <HomePhoto src={slide.src} alt={slide.alt} className="h-full w-full object-cover" />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 to-transparent p-5">
                       <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-200">
                         {slide.label}
@@ -200,7 +223,7 @@ export default function HomePageV2() {
           {services.map(({ title, description, icon: Icon, image }) => (
             <article key={title} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
               <div className="h-44 bg-slate-100">
-                <img src={image} alt={title} className="h-full w-full object-cover" />
+                <HomePhoto src={image} alt={title} className="h-full w-full object-cover" />
               </div>
               <div className="space-y-4 p-6">
                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
@@ -219,7 +242,7 @@ export default function HomePageV2() {
       <section className="container pb-14 md:pb-20">
         <div className="grid gap-8 rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-xl md:grid-cols-[0.95fr_1.05fr] md:p-8 lg:p-10">
           <div className="overflow-hidden rounded-xl bg-white">
-            <img src="/photos/3.jpeg" alt="Aquaguard water purifier product range" className="h-full min-h-64 w-full object-cover" />
+            <HomePhoto src={homeImages.purifierClose} alt="Water purifier product detail" className="h-full min-h-64 w-full object-cover" />
           </div>
           <div className="flex flex-col justify-center">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">Need help quickly?</p>

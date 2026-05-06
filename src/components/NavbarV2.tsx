@@ -25,6 +25,11 @@ export default function NavbarV2() {
     navigate("/");
   };
 
+  const handleMobileLogin = () => {
+    setOpen(false);
+    navigate("/login");
+  };
+
   const dashboardLink = user?.role === "admin" ? "/admin" : "/dashboard";
 
   return (
@@ -131,9 +136,9 @@ export default function NavbarV2() {
                   Logout
                 </button>
               ) : (
-                <Link to="/login" onClick={() => setOpen(false)} className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-medium text-slate-700">
+                <button onClick={handleMobileLogin} className="rounded-2xl bg-slate-50 px-4 py-3 text-left text-sm font-medium text-slate-700">
                   Login
-                </Link>
+                </button>
               )}
             </div>
           </div>

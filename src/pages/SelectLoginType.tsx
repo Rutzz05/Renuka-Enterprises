@@ -21,11 +21,11 @@ const SelectLoginType = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Link to="/login/customer">
-              <Button className="w-full">
+            <Button asChild className="w-full">
+              <Link to="/login/customer">
                 Login as Customer
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             <p className="text-sm text-muted-foreground mt-2">
               Don't have an account?{' '}
               <Link to="/register" className="text-primary hover:underline">
@@ -44,11 +44,11 @@ const SelectLoginType = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Link to="/login/admin">
-              <Button variant="outline" className="w-full">
+            <Button asChild variant="outline" className="w-full">
+              <Link to="/login/admin">
                 Login as Admin
-              </Button>
-            </Link>
+              </Link>
+            </Button>
             <p className="text-sm text-muted-foreground mt-2">
               Administrative access only
             </p>

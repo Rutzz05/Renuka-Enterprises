@@ -4,14 +4,20 @@ const WHATSAPP_NUMBER = "919823021804";
 const MESSAGE = "Hi, I need service from Renuka Enterprises.";
 
 export default function WhatsAppButton() {
-  const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(MESSAGE)}`;
+  const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(MESSAGE)}`;
+
+  const openWhatsApp = () => {
+    window.location.href = url;
+  };
 
   return (
     <a
       href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 flex items-center gap-2 rounded-full bg-whatsapp px-4 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-2xl active:translate-y-[1px] hover:scale-105 transition-transform ring-1 ring-border/10 focus-visible:ring-2 focus-visible:ring-offset-2"
+      onClick={(event) => {
+        event.preventDefault();
+        openWhatsApp();
+      }}
+      className="fixed bottom-5 right-5 z-[60] flex min-h-12 touch-manipulation items-center gap-2 rounded-full bg-whatsapp px-4 py-3 text-sm font-semibold text-white shadow-lg ring-1 ring-border/10 transition-transform hover:scale-105 hover:shadow-2xl active:translate-y-[1px] focus-visible:ring-2 focus-visible:ring-offset-2 sm:bottom-6 sm:right-6"
       aria-label="Chat on WhatsApp"
     >
       <MessageCircle className="w-5 h-5" />

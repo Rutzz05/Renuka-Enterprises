@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const whatsappUrl = "https://api.whatsapp.com/send?phone=919823021804&text=Hi%2C%20I%20need%20service%20from%20Renuka%20Enterprises.";
 
   const handleBookNow = () => {
     setOpen(false);
@@ -17,9 +18,9 @@ export default function Chatbot() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 text-sm">
+    <div className="fixed bottom-20 right-5 z-[55] text-sm sm:bottom-24 sm:right-6">
       {/* Chat window */}
-      <div className={`mb-3 w-80 card-elevated rounded-lg bg-card shadow-xl ring-1 ring-border/10 transition-all ${open ? "opacity-100 translate-y-0" : "opacity-0 pointer-events-none translate-y-2"}`}>
+      <div className={`mb-3 w-[calc(100vw-2.5rem)] max-w-80 card-elevated rounded-lg bg-card shadow-xl ring-1 ring-border/10 transition-all ${open ? "opacity-100 translate-y-0" : "opacity-0 pointer-events-none translate-y-2"}`}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-muted">
           <div className="flex items-center gap-3">
             <div className="rounded-full bg-primary/10 p-2 text-primary">
@@ -44,7 +45,7 @@ export default function Chatbot() {
             <Button variant="outline" onClick={handleBookNow} className="justify-start">
               Book a Service
             </Button>
-            <Button variant="ghost" onClick={() => { window.open('https://wa.me/919823021804', '_blank'); }} className="justify-start">
+            <Button variant="ghost" onClick={() => { window.location.href = whatsappUrl; }} className="justify-start">
               Chat on WhatsApp
             </Button>
             <Button variant="ghost" onClick={() => { window.location.href = '/contact'; }} className="justify-start">
@@ -64,7 +65,7 @@ export default function Chatbot() {
       {/* Floating button */}
       <button
         onClick={() => setOpen((s) => !s)}
-        className="flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white shadow-lg hover:shadow-2xl active:translate-y-[1px] hover:scale-105 transition-transform focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
+        className="flex min-h-12 touch-manipulation items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-105 hover:shadow-2xl active:translate-y-[1px] focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-ring"
         aria-label="Open chat assistant"
       >
         <MessageSquare className="w-5 h-5" />

@@ -1,140 +1,256 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { CheckCircle2, Droplets, BatteryCharging, ShieldCheck, ArrowRight, PhoneCall } from "lucide-react";
+import {
+  ArrowRight,
+  BatteryCharging,
+  CheckCircle2,
+  Clock3,
+  Droplets,
+  MapPin,
+  PhoneCall,
+  ShieldCheck,
+  Star,
+  Wrench,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
+
+const PHONE = "+919823021804";
+
+const heroSlides = [
+  {
+    src: "/photos/1.jpg",
+    alt: "Aquaguard water purifier installed in a modern kitchen",
+    label: "Aquaguard Sales & Service",
+  },
+  {
+    src: "/photos/2.jpeg",
+    alt: "Technician holding Aquaguard water purifier for home service",
+    label: "Home Service Visits",
+  },
+  {
+    src: "/photos/7.jpeg",
+    alt: "Inverter and battery backup setup",
+    label: "Inverter Support",
+  },
+  {
+    src: "/photos/5.jpg",
+    alt: "Inverter with tubular batteries",
+    label: "Battery Replacement",
+  },
+];
 
 const services = [
   {
     title: "Aquaguard service",
-    description: "Installation, filter change, leakage checks, and regular maintenance for clean drinking water.",
+    description: "Installation, filter change, leakage repair, maintenance, and purifier support.",
     icon: Droplets,
+    image: "/photos/4.jpeg",
   },
   {
     title: "Inverter service",
-    description: "Repair, backup issues, charging problems, and routine checks for home and shop power systems.",
+    description: "Repair, backup issues, charging problems, and routine checks for power systems.",
     icon: BatteryCharging,
+    image: "/photos/7.jpeg",
   },
   {
     title: "Battery support",
-    description: "Battery replacement guidance, health checks, and dependable support when backup performance drops.",
+    description: "Battery health checks, replacement guidance, and reliable backup support.",
     icon: ShieldCheck,
+    image: "/photos/6.webp",
   },
+];
+
+const trustPoints = [
+  { label: "10+ years", detail: "Local service experience", icon: Star },
+  { label: "Nashik", detail: "Homes, shops, and offices", icon: MapPin },
+  { label: "Quick help", detail: "Call and WhatsApp support", icon: PhoneCall },
+  { label: "AMC support", detail: "Regular maintenance plans", icon: Wrench },
 ];
 
 export default function HomePageV2() {
   const { user } = useAuth();
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % heroSlides.length);
+    }, 4200);
+
+    return () => window.clearInterval(timer);
+  }, []);
 
   return (
-    <div className="space-y-16">
-      <section className="overflow-hidden rounded-[2rem] border border-border/60 bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 px-6 py-16 text-white shadow-2xl sm:px-10 lg:px-16">
-        <div className="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
-          <div className="space-y-6">
-            <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-1 text-sm font-medium text-emerald-100">
-              Trusted local service in Nashik
-            </span>
+    <div className="bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_42%,#f1f8f6_100%)]">
+      <section className="border-b border-slate-200/70 bg-white">
+        <div className="container grid gap-10 py-10 md:py-14 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:py-16">
+          <div className="space-y-7">
+            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800">
+              <MapPin className="h-4 w-4" />
+              Trusted Aquaguard, inverter and battery service in Nashik
+            </div>
+
             <div className="space-y-4">
-              <h1 className="max-w-3xl font-serif text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                Aquaguard, inverter, and battery service you can rely on.
+              <h1 className="max-w-3xl text-4xl font-extrabold leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                Renuka Enterprises
               </h1>
-              <p className="max-w-2xl text-base text-slate-200 sm:text-lg">
-                Renuka Enterprises helps homes, shops, and local businesses with product supply,
-                service visits, and dependable after-sales support. We focus on clear communication,
-                timely response, and honest service.
+              <p className="max-w-2xl text-xl font-semibold text-slate-800 sm:text-2xl">
+                Aquaguard, inverter and battery service you can rely on.
+              </p>
+              <p className="max-w-2xl text-base leading-7 text-slate-600">
+                We help homes, shops, and local businesses with product supply, installation,
+                repair, AMC visits, and after-sales support with clear communication.
               </p>
             </div>
+
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="bg-emerald-400 text-slate-950 hover:bg-emerald-300">
+              <a href={`tel:${PHONE}`}>
+                <Button size="lg" className="w-full gap-2 rounded-lg sm:w-auto">
+                  <PhoneCall className="h-4 w-4" />
+                  Call Now
+                </Button>
+              </a>
+              <Button asChild size="lg" variant="outline" className="rounded-lg">
                 <Link to="/contact">
-                  Request Service
-                  <PhoneCall className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                variant="outline"
-                className="border-white/20 bg-white/5 text-white hover:bg-white/10"
-              >
-                <Link to="/products">
-                  View Products
+                  Book Service
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
             </div>
-            <p className="text-sm text-slate-300">
+
+            <div className="grid gap-3 sm:grid-cols-3">
+              {[
+                ["Aquaguard", "Sales & service"],
+                ["Inverter", "Repair & install"],
+                ["Battery", "Health & replacement"],
+              ].map(([label, detail]) => (
+                <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <p className="font-semibold text-slate-950">{label}</p>
+                  <p className="text-sm text-slate-600">{detail}</p>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-sm text-slate-600">
               {user
-                ? `Welcome back, ${user.name}. You can track your bookings and invoices from your dashboard.`
-                : "Service booking, product enquiries, and customer login are all available from one place."}
+                ? `Welcome back, ${user.name}. Your bookings and invoices are available in your dashboard.`
+                : "Login is available for customer bookings, invoice tracking, and admin management."}
             </p>
           </div>
 
-          <Card className="border-white/10 bg-white/10 text-white shadow-xl backdrop-blur">
-            <CardContent className="space-y-5 p-6">
-              <div>
-                <p className="text-sm uppercase tracking-[0.2em] text-emerald-200">Why customers choose us</p>
-                <h2 className="mt-2 font-serif text-2xl font-semibold">Simple, dependable local support</h2>
-              </div>
-              <div className="space-y-3">
-                {[
-                  "Aquaguard servicing and filter support",
-                  "Inverter and battery troubleshooting",
-                  "Clear communication on visits and status",
-                  "Quick help for homes, offices, and shops",
-                ].map((point) => (
-                  <div key={point} className="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-950/30 p-4">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 text-emerald-300" />
-                    <p className="text-sm text-slate-100">{point}</p>
+          <div className="relative">
+            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-2xl">
+              <div
+                className="flex transition-transform duration-700 ease-out"
+                style={{ transform: `translateX(-${activeSlide * 100}%)` }}
+              >
+                {heroSlides.map((slide) => (
+                  <div key={slide.src} className="relative h-[320px] min-w-full sm:h-[420px] lg:h-[500px]">
+                    <img src={slide.src} alt={slide.alt} className="h-full w-full object-cover" />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 to-transparent p-5">
+                      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-200">
+                        {slide.label}
+                      </p>
+                    </div>
                   </div>
                 ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+
+            <div className="absolute bottom-5 right-5 flex gap-2">
+              {heroSlides.map((slide, index) => (
+                <button
+                  key={slide.src}
+                  type="button"
+                  aria-label={`Show ${slide.label}`}
+                  onClick={() => setActiveSlide(index)}
+                  className={`h-2.5 rounded-full transition-all ${
+                    activeSlide === index ? "w-8 bg-white" : "w-2.5 bg-white/50 hover:bg-white/80"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
-      <section className="space-y-6">
-        <div className="space-y-2">
+      <section className="container py-12 md:py-16">
+        <div className="grid gap-4 md:grid-cols-4">
+          {trustPoints.map(({ label, detail, icon: Icon }) => (
+            <div key={label} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+              <Icon className="h-5 w-5 text-primary" />
+              <p className="mt-4 text-xl font-bold text-slate-950">{label}</p>
+              <p className="text-sm text-slate-600">{detail}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="container pb-12 md:pb-16">
+        <div className="mb-7 max-w-3xl">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary/70">Our services</p>
-          <h2 className="font-serif text-3xl font-semibold text-slate-950">Solutions for everyday power and water needs</h2>
-          <p className="max-w-3xl text-sm leading-6 text-slate-600">
-            We supply products and provide trusted service support for essential systems used in homes and businesses.
+          <h2 className="mt-2 text-3xl font-bold text-slate-950">Solutions for everyday power and water needs</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-600">
+            Product supply and dependable service support for essential systems used in homes and businesses.
           </p>
         </div>
+
         <div className="grid gap-6 md:grid-cols-3">
-        {services.map(({ title, description, icon: Icon }) => (
-          <Card key={title} className="border-border/60 bg-white/80 shadow-sm backdrop-blur">
-            <CardContent className="space-y-4 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
-                <Icon className="h-6 w-6" />
+          {services.map(({ title, description, icon: Icon, image }) => (
+            <article key={title} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+              <div className="h-44 bg-slate-100">
+                <img src={image} alt={title} className="h-full w-full object-cover" />
               </div>
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-                <p className="text-sm leading-6 text-slate-600">{description}</p>
+              <div className="space-y-4 p-6">
+                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-slate-950">{title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+                </div>
               </div>
-            </CardContent>
-          </Card>
-        ))}
+            </article>
+          ))}
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-border/60 bg-white px-6 py-8 shadow-sm sm:px-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary/70">Need help quickly?</p>
-            <h2 className="mt-2 font-serif text-3xl font-semibold text-slate-950">Book a service visit or browse our products</h2>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-              Whether you need urgent support, routine maintenance, or a new product enquiry, we are ready to help.
-            </p>
+      <section className="container pb-14 md:pb-20">
+        <div className="grid gap-8 rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-xl md:grid-cols-[0.95fr_1.05fr] md:p-8 lg:p-10">
+          <div className="overflow-hidden rounded-xl bg-white">
+            <img src="/photos/3.jpeg" alt="Aquaguard water purifier product range" className="h-full min-h-64 w-full object-cover" />
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row">
-            <Button asChild size="lg">
-              <Link to="/contact">Request Service</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link to="/products">View Products</Link>
-            </Button>
+          <div className="flex flex-col justify-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">Need help quickly?</p>
+            <h2 className="mt-3 text-3xl font-bold">Book a service visit or ask for product guidance</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
+              Whether it is urgent repair, routine maintenance, filter replacement, or a new product enquiry,
+              we can guide you on the right next step.
+            </p>
+            <div className="mt-6 grid gap-3 text-sm text-slate-200 sm:grid-cols-2">
+              {["Same-day call response", "Service across Nashik", "Product and AMC guidance", "Clear visit communication"].map((point) => (
+                <p key={point} className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-300" />
+                  {point}
+                </p>
+              ))}
+            </div>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <a href={`tel:${PHONE}`}>
+                <Button size="lg" className="w-full gap-2 rounded-lg bg-emerald-400 text-slate-950 hover:bg-emerald-300 sm:w-auto">
+                  <PhoneCall className="h-4 w-4" />
+                  Call +91 98230 21804
+                </Button>
+              </a>
+              <Button asChild size="lg" variant="outline" className="rounded-lg border-white/20 bg-white/5 text-white hover:bg-white/10">
+                <Link to="/products">View Products</Link>
+              </Button>
+            </div>
+            <p className="mt-5 flex items-center gap-2 text-sm text-slate-400">
+              <Clock3 className="h-4 w-4" />
+              Mon-Sat, 9 AM to 7 PM
+            </p>
           </div>
         </div>
       </section>

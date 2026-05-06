@@ -29,7 +29,7 @@ export default function NavbarV2() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
-      <div className="container flex h-18 items-center justify-between py-3">
+      <div className="container flex h-20 items-center justify-between py-3">
         <Link to="/" className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--hero-gradient)] text-lg font-black text-white shadow-lg">
             R

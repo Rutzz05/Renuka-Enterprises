@@ -7,6 +7,47 @@ import { productsAPI } from "@/services/apiClient";
 
 const PHONE = "+919823021804";
 
+const productImages = {
+  purifier: [
+    "https://images.unsplash.com/photo-1662647343432-a8710bfd6162?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1662460149330-dc1780e5f6bd?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1662460150087-541eed218e0b?auto=format&fit=crop&w=1200&q=80",
+  ],
+  inverter: [
+    "https://images.unsplash.com/photo-1662601633298-3b0f7ee2aef9?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1595397210491-957770d2568a?auto=format&fit=crop&w=1200&q=80",
+  ],
+  battery: [
+    "https://images.unsplash.com/photo-1742899273038-67ff67477663?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1765211003026-f7666ea3a948?auto=format&fit=crop&w=1200&q=80",
+  ],
+};
+
+const productShowcase = [
+  {
+    title: "Aquaguard purifiers",
+    description: "Water purifier supply, setup, filter support, and maintenance.",
+    image: productImages.purifier[0],
+  },
+  {
+    title: "Inverter systems",
+    description: "Backup power products for homes, shops, and offices.",
+    image: productImages.inverter[0],
+  },
+  {
+    title: "Tubular batteries",
+    description: "Battery replacement guidance and backup health checks.",
+    image: productImages.battery[0],
+  },
+];
+
+const fallbackImages = [
+  productImages.purifier[1],
+  productImages.inverter[1],
+  productImages.battery[1],
+  productImages.purifier[2],
+];
+
 type Product = {
   _id: string;
   name: string;
@@ -16,6 +57,42 @@ type Product = {
   stock: number;
   image?: string;
 };
+
+function getProductImage(product: Product, index: number) {
+  if (product.image) {
+    return product.image;
+  }
+
+  const searchableText = `${product.name} ${product.category} ${product.description}`.toLowerCase();
+
+  if (searchableText.includes("battery")) {
+    return productImages.battery[index % productImages.battery.length];
+  }
+
+  if (searchableText.includes("inverter") || searchableText.includes("ups")) {
+    return productImages.inverter[index % productImages.inverter.length];
+  }
+
+  if (searchableText.includes("aqua") || searchableText.includes("water") || searchableText.includes("purifier")) {
+    return productImages.purifier[index % productImages.purifier.length];
+  }
+
+  return fallbackImages[index % fallbackImages.length];
+}
+
+function ProductPhoto({ src, alt, className }: { src: string; alt: string; className: string }) {
+  const [imageSrc, setImageSrc] = useState(src);
+
+  return (
+    <img
+      src={imageSrc}
+      alt={alt}
+      className={className}
+      loading="lazy"
+      onError={() => setImageSrc("/placeholder.svg")}
+    />
+  );
+}
 
 export default function ProductsPageV2() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -64,6 +141,20 @@ export default function ProductsPageV2() {
           ))}
         </div>
 
+        <div className="mt-10 grid gap-5 lg:grid-cols-3">
+          {productShowcase.map((item) => (
+            <article key={item.title} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+              <div className="h-48 bg-slate-100">
+                <ProductPhoto src={item.image} alt={item.title} className="h-full w-full object-cover" />
+              </div>
+              <div className="p-5">
+                <h2 className="text-lg font-bold text-slate-950">{item.title}</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-600">{item.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+
         <div className="mt-10">
           {loading ? (
             <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
@@ -80,14 +171,14 @@ export default function ProductsPageV2() {
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {products.map((product) => (
+              {products.map((product, index) => (
                 <article
                   key={product._id}
                   className="group overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_24px_70px_-45px_rgba(15,23,42,0.45)] transition hover:-translate-y-1 hover:shadow-[0_24px_80px_-35px_rgba(15,23,42,0.5)]"
                 >
                   <div className="relative h-56 overflow-hidden bg-slate-100">
-                    <img
-                      src={product.image || "https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?auto=format&fit=crop&w=900&q=80"}
+                    <ProductPhoto
+                      src={getProductImage(product, index)}
                       alt={product.name}
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                     />

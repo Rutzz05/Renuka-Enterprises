@@ -19,34 +19,42 @@ import { useAuth } from "@/contexts/AuthContext";
 const PHONE = "+919823021804";
 
 const homeImages = {
-  purifierKitchen: "https://images.unsplash.com/photo-1662647343432-a8710bfd6162?auto=format&fit=crop&w=1400&q=80",
+  indianElectronicsLab:
+    "https://images.pexels.com/photos/35155420/pexels-photo-35155420.jpeg?auto=compress&cs=tinysrgb&w=1400",
+  indianServiceBench:
+    "https://images.pexels.com/photos/35872217/pexels-photo-35872217.jpeg?auto=compress&cs=tinysrgb&w=1400",
+  indianAcWorkshop:
+    "https://images.pexels.com/photos/33671149/pexels-photo-33671149.jpeg?auto=compress&cs=tinysrgb&w=1400",
+  indianRepairWorkshop:
+    "https://images.pexels.com/photos/33755641/pexels-photo-33755641.jpeg?auto=compress&cs=tinysrgb&w=1400",
   purifierProduct: "https://images.unsplash.com/photo-1662460149330-dc1780e5f6bd?auto=format&fit=crop&w=1400&q=80",
   purifierClose: "https://images.unsplash.com/photo-1662460150087-541eed218e0b?auto=format&fit=crop&w=1400&q=80",
-  serviceTechnician: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1400&q=80",
-  backupPower: "https://images.unsplash.com/photo-1595397210491-957770d2568a?auto=format&fit=crop&w=1400&q=80",
-  batterySystem: "https://images.unsplash.com/photo-1742899273038-67ff67477663?auto=format&fit=crop&w=1400&q=80",
 };
 
 const heroSlides = [
   {
-    src: homeImages.purifierKitchen,
-    alt: "Modern water purifier setup in a clean kitchen",
+    src: homeImages.indianElectronicsLab,
+    alt: "Indian technician repairing electronics in a Delhi workshop",
     label: "Aquaguard Sales & Service",
+    position: "center center",
   },
   {
-    src: homeImages.serviceTechnician,
-    alt: "Technician checking electrical service equipment",
+    src: homeImages.indianServiceBench,
+    alt: "Indian technician testing service equipment at a workbench",
     label: "Home Service Visits",
+    position: "center center",
   },
   {
-    src: homeImages.backupPower,
-    alt: "Backup power equipment for reliable electricity",
+    src: homeImages.indianAcWorkshop,
+    alt: "Indian technician repairing appliance equipment in a workshop",
     label: "Inverter Support",
+    position: "center center",
   },
   {
-    src: homeImages.batterySystem,
-    alt: "Battery backup system for power storage",
+    src: homeImages.indianRepairWorkshop,
+    alt: "Indian repair technician working with service tools",
     label: "Battery Replacement",
+    position: "center center",
   },
 ];
 
@@ -61,13 +69,15 @@ const services = [
     title: "Inverter service",
     description: "Repair, backup issues, charging problems, and routine checks for power systems.",
     icon: BatteryCharging,
-    image: homeImages.backupPower,
+    image: homeImages.indianServiceBench,
+    position: "center center",
   },
   {
     title: "Battery support",
     description: "Battery health checks, replacement guidance, and reliable backup support.",
     icon: ShieldCheck,
-    image: homeImages.batterySystem,
+    image: homeImages.indianRepairWorkshop,
+    position: "center center",
   },
 ];
 
@@ -78,7 +88,17 @@ const trustPoints = [
   { label: "AMC support", detail: "Regular maintenance plans", icon: Wrench },
 ];
 
-function HomePhoto({ src, alt, className }: { src: string; alt: string; className: string }) {
+function HomePhoto({
+  src,
+  alt,
+  className,
+  position = "center center",
+}: {
+  src: string;
+  alt: string;
+  className: string;
+  position?: string;
+}) {
   const [imageSrc, setImageSrc] = useState(src);
 
   return (
@@ -87,6 +107,7 @@ function HomePhoto({ src, alt, className }: { src: string; alt: string; classNam
       alt={alt}
       className={className}
       loading="lazy"
+      style={{ objectPosition: position }}
       onError={() => setImageSrc("/placeholder.svg")}
     />
   );
@@ -169,8 +190,8 @@ export default function HomePageV2() {
                 style={{ transform: `translateX(-${activeSlide * 100}%)` }}
               >
                 {heroSlides.map((slide) => (
-                  <div key={slide.src} className="relative h-[320px] min-w-full sm:h-[420px] lg:h-[500px]">
-                    <HomePhoto src={slide.src} alt={slide.alt} className="h-full w-full object-cover" />
+                  <div key={slide.src} className="relative aspect-[4/3] min-w-full sm:aspect-[16/11] lg:aspect-auto lg:h-[500px]">
+                    <HomePhoto src={slide.src} alt={slide.alt} position={slide.position} className="h-full w-full object-cover" />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 to-transparent p-5">
                       <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-200">
                         {slide.label}
@@ -220,10 +241,10 @@ export default function HomePageV2() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {services.map(({ title, description, icon: Icon, image }) => (
+          {services.map(({ title, description, icon: Icon, image, position }) => (
             <article key={title} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-              <div className="h-44 bg-slate-100">
-                <HomePhoto src={image} alt={title} className="h-full w-full object-cover" />
+              <div className="aspect-[4/3] bg-slate-100 sm:aspect-[16/10]">
+                <HomePhoto src={image} alt={title} position={position} className="h-full w-full object-cover" />
               </div>
               <div className="space-y-4 p-6">
                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">

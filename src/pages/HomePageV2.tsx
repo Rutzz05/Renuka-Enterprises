@@ -19,41 +19,39 @@ import { useAuth } from "@/contexts/AuthContext";
 const PHONE = "+919823021804";
 
 const homeImages = {
-  indianFamilyKitchen:
-    "https://images.pexels.com/photos/33641625/pexels-photo-33641625.jpeg?auto=compress&cs=tinysrgb&w=1400",
-  purifierProduct: "https://images.unsplash.com/photo-1662460149330-dc1780e5f6bd?auto=format&fit=crop&w=1400&q=80",
-  purifierClose: "https://images.unsplash.com/photo-1662460150087-541eed218e0b?auto=format&fit=crop&w=1400&q=80",
-  serviceProduct: "https://images.unsplash.com/photo-1662647343432-a8710bfd6162?auto=format&fit=crop&w=1400&q=80",
-  backupBatteries:
-    "https://images.pexels.com/photos/36594160/pexels-photo-36594160.jpeg?auto=compress&cs=tinysrgb&w=1400",
-  batteryClose:
-    "https://images.pexels.com/photos/698485/pexels-photo-698485.jpeg?auto=compress&cs=tinysrgb&w=1400",
+  aquaguardFamily: "/photos/1.jpg",
+  aquaguardService: "/photos/2.jpeg",
+  aquaguardPurifiers: "/photos/3.jpeg",
+  aquaguardProduct: "/photos/4.jpeg",
+  inverterBatterySet: "/photos/5.jpg",
+  sfBattery: "/photos/6.webp",
+  inverterSetup: "/photos/7.jpeg",
 };
 
 const heroSlides = [
   {
-    src: homeImages.indianFamilyKitchen,
-    alt: "Indian mother and child in a modern home kitchen",
+    src: homeImages.aquaguardFamily,
+    alt: "Aquaguard water purifier in a family kitchen",
     label: "Clean Water for Families",
-    position: "center 42%",
+    fit: "contain",
   },
   {
-    src: homeImages.purifierProduct,
-    alt: "Modern water purifier product detail",
+    src: homeImages.aquaguardService,
+    alt: "Aquaguard home service and purifier support",
     label: "Aquaguard Sales & Service",
-    position: "center center",
+    fit: "contain",
   },
   {
-    src: homeImages.backupBatteries,
-    alt: "Battery backup products arranged for power support",
+    src: homeImages.inverterSetup,
+    alt: "Inverter and battery backup setup",
     label: "Inverter & Battery Backup",
-    position: "center center",
+    fit: "contain",
   },
   {
-    src: homeImages.purifierClose,
-    alt: "Clean water purifier product in a neat setting",
+    src: homeImages.inverterBatterySet,
+    alt: "Inverter and tubular battery products",
     label: "Filter & AMC Support",
-    position: "center center",
+    fit: "contain",
   },
 ];
 
@@ -62,22 +60,22 @@ const services = [
     title: "Aquaguard service",
     description: "Installation, filter change, leakage repair, maintenance, and purifier support.",
     icon: Droplets,
-    image: homeImages.serviceProduct,
-    position: "center center",
+    image: homeImages.aquaguardProduct,
+    fit: "contain",
   },
   {
     title: "Inverter service",
     description: "Repair, backup issues, charging problems, and routine checks for power systems.",
     icon: BatteryCharging,
-    image: homeImages.backupBatteries,
-    position: "center center",
+    image: homeImages.inverterSetup,
+    fit: "contain",
   },
   {
     title: "Battery support",
     description: "Battery health checks, replacement guidance, and reliable backup support.",
     icon: ShieldCheck,
-    image: homeImages.batteryClose,
-    position: "center center",
+    image: homeImages.sfBattery,
+    fit: "contain",
   },
 ];
 
@@ -92,11 +90,13 @@ function HomePhoto({
   src,
   alt,
   className,
+  fit = "cover",
   position = "center center",
 }: {
   src: string;
   alt: string;
   className: string;
+  fit?: "cover" | "contain";
   position?: string;
 }) {
   const [imageSrc, setImageSrc] = useState(src);
@@ -107,7 +107,7 @@ function HomePhoto({
       alt={alt}
       className={className}
       loading="lazy"
-      style={{ objectPosition: position }}
+      style={{ objectFit: fit, objectPosition: position }}
       onError={() => setImageSrc("/placeholder.svg")}
     />
   );
@@ -190,8 +190,8 @@ export default function HomePageV2() {
                 style={{ transform: `translateX(-${activeSlide * 100}%)` }}
               >
                 {heroSlides.map((slide) => (
-                  <div key={slide.src} className="relative aspect-[4/3] min-w-full sm:aspect-[16/11] lg:aspect-auto lg:h-[500px]">
-                    <HomePhoto src={slide.src} alt={slide.alt} position={slide.position} className="h-full w-full object-cover" />
+                  <div key={slide.src} className="relative aspect-[4/3] min-w-full bg-gradient-to-br from-slate-50 via-white to-emerald-50 sm:aspect-[16/11] lg:aspect-auto lg:h-[500px]">
+                    <HomePhoto src={slide.src} alt={slide.alt} fit={slide.fit as "cover" | "contain"} className="h-full w-full p-3 sm:p-5" />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 to-transparent p-5">
                       <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-200">
                         {slide.label}
@@ -241,10 +241,10 @@ export default function HomePageV2() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {services.map(({ title, description, icon: Icon, image, position }) => (
+          {services.map(({ title, description, icon: Icon, image, fit }) => (
             <article key={title} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-              <div className="aspect-[4/3] bg-gradient-to-br from-slate-50 to-emerald-50 sm:aspect-[16/10]">
-                <HomePhoto src={image} alt={title} position={position} className="h-full w-full object-cover" />
+              <div className="aspect-[4/3] bg-gradient-to-br from-slate-50 via-white to-emerald-50 sm:aspect-[16/10]">
+                <HomePhoto src={image} alt={title} fit={fit as "cover" | "contain"} className="h-full w-full p-4" />
               </div>
               <div className="space-y-4 p-6">
                 <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
@@ -263,7 +263,7 @@ export default function HomePageV2() {
       <section className="container pb-14 md:pb-20">
         <div className="grid gap-8 rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-xl md:grid-cols-[0.95fr_1.05fr] md:p-8 lg:p-10">
           <div className="overflow-hidden rounded-xl bg-white">
-            <HomePhoto src={homeImages.purifierClose} alt="Water purifier product detail" className="h-full min-h-64 w-full object-cover" />
+            <HomePhoto src={homeImages.aquaguardPurifiers} alt="Aquaguard water purifier product range" fit="contain" className="h-full min-h-64 w-full bg-gradient-to-br from-slate-50 via-white to-emerald-50 p-6" />
           </div>
           <div className="flex flex-col justify-center">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">Need help quickly?</p>

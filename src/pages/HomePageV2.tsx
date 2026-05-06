@@ -19,41 +19,40 @@ import { useAuth } from "@/contexts/AuthContext";
 const PHONE = "+919823021804";
 
 const homeImages = {
-  indianElectronicsLab:
-    "https://images.pexels.com/photos/35155420/pexels-photo-35155420.jpeg?auto=compress&cs=tinysrgb&w=1400",
-  indianServiceBench:
-    "https://images.pexels.com/photos/35872217/pexels-photo-35872217.jpeg?auto=compress&cs=tinysrgb&w=1400",
-  indianAcWorkshop:
-    "https://images.pexels.com/photos/33671149/pexels-photo-33671149.jpeg?auto=compress&cs=tinysrgb&w=1400",
-  indianRepairWorkshop:
-    "https://images.pexels.com/photos/33755641/pexels-photo-33755641.jpeg?auto=compress&cs=tinysrgb&w=1400",
+  indianFamilyKitchen:
+    "https://images.pexels.com/photos/33641625/pexels-photo-33641625.jpeg?auto=compress&cs=tinysrgb&w=1400",
   purifierProduct: "https://images.unsplash.com/photo-1662460149330-dc1780e5f6bd?auto=format&fit=crop&w=1400&q=80",
   purifierClose: "https://images.unsplash.com/photo-1662460150087-541eed218e0b?auto=format&fit=crop&w=1400&q=80",
+  serviceProduct: "https://images.unsplash.com/photo-1662647343432-a8710bfd6162?auto=format&fit=crop&w=1400&q=80",
+  backupBatteries:
+    "https://images.pexels.com/photos/36594160/pexels-photo-36594160.jpeg?auto=compress&cs=tinysrgb&w=1400",
+  batteryClose:
+    "https://images.pexels.com/photos/698485/pexels-photo-698485.jpeg?auto=compress&cs=tinysrgb&w=1400",
 };
 
 const heroSlides = [
   {
-    src: homeImages.indianElectronicsLab,
-    alt: "Indian technician repairing electronics in a Delhi workshop",
+    src: homeImages.indianFamilyKitchen,
+    alt: "Indian mother and child in a modern home kitchen",
+    label: "Clean Water for Families",
+    position: "center 42%",
+  },
+  {
+    src: homeImages.purifierProduct,
+    alt: "Modern water purifier product detail",
     label: "Aquaguard Sales & Service",
     position: "center center",
   },
   {
-    src: homeImages.indianServiceBench,
-    alt: "Indian technician testing service equipment at a workbench",
-    label: "Home Service Visits",
+    src: homeImages.backupBatteries,
+    alt: "Battery backup products arranged for power support",
+    label: "Inverter & Battery Backup",
     position: "center center",
   },
   {
-    src: homeImages.indianAcWorkshop,
-    alt: "Indian technician repairing appliance equipment in a workshop",
-    label: "Inverter Support",
-    position: "center center",
-  },
-  {
-    src: homeImages.indianRepairWorkshop,
-    alt: "Indian repair technician working with service tools",
-    label: "Battery Replacement",
+    src: homeImages.purifierClose,
+    alt: "Clean water purifier product in a neat setting",
+    label: "Filter & AMC Support",
     position: "center center",
   },
 ];
@@ -63,20 +62,21 @@ const services = [
     title: "Aquaguard service",
     description: "Installation, filter change, leakage repair, maintenance, and purifier support.",
     icon: Droplets,
-    image: homeImages.purifierProduct,
+    image: homeImages.serviceProduct,
+    position: "center center",
   },
   {
     title: "Inverter service",
     description: "Repair, backup issues, charging problems, and routine checks for power systems.",
     icon: BatteryCharging,
-    image: homeImages.indianServiceBench,
+    image: homeImages.backupBatteries,
     position: "center center",
   },
   {
     title: "Battery support",
     description: "Battery health checks, replacement guidance, and reliable backup support.",
     icon: ShieldCheck,
-    image: homeImages.indianRepairWorkshop,
+    image: homeImages.batteryClose,
     position: "center center",
   },
 ];
@@ -242,8 +242,8 @@ export default function HomePageV2() {
 
         <div className="grid gap-6 md:grid-cols-3">
           {services.map(({ title, description, icon: Icon, image, position }) => (
-            <article key={title} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
-              <div className="aspect-[4/3] bg-slate-100 sm:aspect-[16/10]">
+            <article key={title} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+              <div className="aspect-[4/3] bg-gradient-to-br from-slate-50 to-emerald-50 sm:aspect-[16/10]">
                 <HomePhoto src={image} alt={title} position={position} className="h-full w-full object-cover" />
               </div>
               <div className="space-y-4 p-6">

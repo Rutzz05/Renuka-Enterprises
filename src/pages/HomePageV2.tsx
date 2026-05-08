@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
-const PHONE = "9823021804";
+const PHONE = "+919823021804";
 
 const homeImages = {
   aquaguardFamily: "/photos/1.jpg",
@@ -116,6 +116,9 @@ function HomePhoto({
 export default function HomePageV2() {
   const { user } = useAuth();
   const [activeSlide, setActiveSlide] = useState(0);
+  const handleCall = () => {
+    window.location.href = `tel:${PHONE}`;
+  };
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -150,7 +153,7 @@ export default function HomePageV2() {
 
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="w-full gap-2 rounded-lg sm:w-auto">
-                <a href={`tel:${PHONE}`} aria-label="Call Renuka Enterprises">
+                <a href={`tel:${PHONE}`} onClick={handleCall} aria-label="Call Renuka Enterprises">
                   <PhoneCall className="h-4 w-4" />
                   Call Now
                 </a>
@@ -282,7 +285,7 @@ export default function HomePageV2() {
             </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="w-full gap-2 rounded-lg bg-emerald-400 text-slate-950 hover:bg-emerald-300 sm:w-auto">
-                <a href={`tel:${PHONE}`} aria-label="Call Renuka Enterprises">
+                <a href={`tel:${PHONE}`} onClick={handleCall} aria-label="Call Renuka Enterprises">
                   <PhoneCall className="h-4 w-4" />
                   Call +91 98230 21804
                 </a>

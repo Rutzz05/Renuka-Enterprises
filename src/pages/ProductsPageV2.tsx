@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { productsAPI } from "@/services/apiClient";
 
-const PHONE = "9823021804";
+const PHONE = "+919823021804";
 
 const productImages = {
   purifier: [
@@ -97,6 +97,9 @@ function ProductPhoto({ src, alt, className }: { src: string; alt: string; class
 export default function ProductsPageV2() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const handleCall = () => {
+    window.location.href = `tel:${PHONE}`;
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -206,7 +209,7 @@ export default function ProductsPageV2() {
                     </div>
 
                     <Button asChild className="mt-5 w-full gap-2 rounded-xl">
-                      <a href={`tel:${PHONE}`} aria-label={`Call about ${product.name}`}>
+                      <a href={`tel:${PHONE}`} onClick={handleCall} aria-label={`Call about ${product.name}`}>
                         <Phone className="h-4 w-4" />
                         Enquire now
                       </a>

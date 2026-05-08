@@ -4,6 +4,9 @@ import ServiceBookingFormV3 from "@/components/ServiceBookingFormV3";
 const PHONE = "+919823021804";
 
 export default function ContactPage() {
+  const handleCall = () => {
+    window.location.href = `tel:${PHONE}`;
+  };
 
   return (
     <>
@@ -37,7 +40,7 @@ export default function ContactPage() {
                   <Phone className="w-5 h-5 text-primary mt-0.5" />
                   <div>
                     <p className="font-semibold">Phone</p>
-                    <a href={`tel:${PHONE}`} className="text-primary hover:underline">+91 98230 21804</a>
+                    <a href={`tel:${PHONE}`} onClick={handleCall} className="text-primary hover:underline">+91 98230 21804</a>
                   </div>
                 </li>
                 <li className="flex items-start gap-3">

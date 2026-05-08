@@ -4,7 +4,7 @@ import { LogOut, Menu, Phone, Shield, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
-const PHONE = "9823021804";
+const PHONE = "+919823021804";
 
 const links = [
   { label: "Home", to: "/" },
@@ -28,6 +28,10 @@ export default function NavbarV2() {
   const handleMobileLogin = () => {
     setOpen(false);
     navigate("/login");
+  };
+
+  const handleCall = () => {
+    window.location.href = `tel:${PHONE}`;
   };
 
   const dashboardLink = user?.role === "admin" ? "/admin" : "/dashboard";
@@ -90,16 +94,26 @@ export default function NavbarV2() {
           )}
 
           <Button asChild className="rounded-full">
-            <a href={`tel:${PHONE}`} aria-label="Call Renuka Enterprises">
+            <a href={`tel:${PHONE}`} onClick={handleCall} aria-label="Call Renuka Enterprises">
               <Phone className="mr-2 h-4 w-4" />
               Call now
             </a>
           </Button>
         </div>
 
-        <button className="rounded-xl p-2 text-slate-700 lg:hidden" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <a
+            href={`tel:${PHONE}`}
+            onClick={handleCall}
+            className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl bg-primary text-white shadow-sm pointer-events-auto"
+            aria-label="Call Renuka Enterprises"
+          >
+            <Phone className="h-5 w-5" />
+          </a>
+          <button className="rounded-xl p-2 text-slate-700" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </div>
 
       {open && (
@@ -142,7 +156,10 @@ export default function NavbarV2() {
               )}
               <a
                 href={`tel:${PHONE}`}
-                onClick={() => setOpen(false)}
+                onClick={() => {
+                  setOpen(false);
+                  handleCall();
+                }}
                 className="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white"
                 aria-label="Call Renuka Enterprises"
               >

@@ -154,18 +154,6 @@ export default function NavbarV2() {
                   Login
                 </button>
               )}
-              <a
-                href={`tel:${PHONE}`}
-                onClick={() => {
-                  setOpen(false);
-                  handleCall();
-                }}
-                className="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-3 text-sm font-semibold text-white"
-                aria-label="Call Renuka Enterprises"
-              >
-                <Phone className="h-4 w-4" />
-                Call +91 98230 21804
-              </a>
             </div>
           </div>
         </div>

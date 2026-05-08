@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { productsAPI } from "@/services/apiClient";
 
-const PHONE = "+919823021804";
+const PHONE = "9823021804";
 
 const productImages = {
   purifier: [
@@ -205,12 +205,12 @@ export default function ProductsPageV2() {
                       </span>
                     </div>
 
-                    <a href={`tel:${PHONE}`} className="mt-5 block">
-                      <Button className="w-full gap-2 rounded-xl">
+                    <Button asChild className="mt-5 w-full gap-2 rounded-xl">
+                      <a href={`tel:${PHONE}`} aria-label={`Call about ${product.name}`}>
                         <Phone className="h-4 w-4" />
                         Enquire now
-                      </Button>
-                    </a>
+                      </a>
+                    </Button>
                   </div>
                 </article>
               ))}

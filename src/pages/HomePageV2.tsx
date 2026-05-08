@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
-const PHONE = "+919823021804";
+const PHONE = "9823021804";
 
 const homeImages = {
   aquaguardFamily: "/photos/1.jpg",
@@ -149,12 +149,12 @@ export default function HomePageV2() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <a href={`tel:${PHONE}`}>
-                <Button size="lg" className="w-full gap-2 rounded-lg sm:w-auto">
+              <Button asChild size="lg" className="w-full gap-2 rounded-lg sm:w-auto">
+                <a href={`tel:${PHONE}`} aria-label="Call Renuka Enterprises">
                   <PhoneCall className="h-4 w-4" />
                   Call Now
-                </Button>
-              </a>
+                </a>
+              </Button>
               <Button asChild size="lg" variant="outline" className="rounded-lg">
                 <Link to="/contact">
                   Book Service
@@ -281,12 +281,12 @@ export default function HomePageV2() {
               ))}
             </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a href={`tel:${PHONE}`}>
-                <Button size="lg" className="w-full gap-2 rounded-lg bg-emerald-400 text-slate-950 hover:bg-emerald-300 sm:w-auto">
+              <Button asChild size="lg" className="w-full gap-2 rounded-lg bg-emerald-400 text-slate-950 hover:bg-emerald-300 sm:w-auto">
+                <a href={`tel:${PHONE}`} aria-label="Call Renuka Enterprises">
                   <PhoneCall className="h-4 w-4" />
                   Call +91 98230 21804
-                </Button>
-              </a>
+                </a>
+              </Button>
               <Button asChild size="lg" variant="outline" className="rounded-lg border-white/20 bg-white/5 text-white hover:bg-white/10">
                 <Link to="/products">View Products</Link>
               </Button>

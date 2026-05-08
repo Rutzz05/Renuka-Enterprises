@@ -1,7 +1,7 @@
 import { Droplets, Zap, Phone, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-const PHONE = "+919823021804";
+const PHONE = "9823021804";
 
 const aquaguardServices = [
   "New Aquaguard Sales & Consultation",
@@ -51,11 +51,11 @@ export default function ServicesPage() {
                 </li>
               ))}
             </ul>
-            <a href={`tel:${PHONE}`}>
-              <Button className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
+            <Button asChild className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
+              <a href={`tel:${PHONE}`} aria-label="Book Aquaguard service by phone">
                 <Phone className="w-4 h-4" /> Book Aquaguard Service
-              </Button>
-            </a>
+              </a>
+            </Button>
           </div>
 
           {/* Inverter */}
@@ -74,11 +74,11 @@ export default function ServicesPage() {
                 </li>
               ))}
             </ul>
-            <a href={`tel:${PHONE}`}>
-              <Button className="gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground w-full sm:w-auto">
+            <Button asChild className="gap-2 bg-secondary hover:bg-secondary/90 text-secondary-foreground w-full sm:w-auto">
+              <a href={`tel:${PHONE}`} aria-label="Book inverter service by phone">
                 <Phone className="w-4 h-4" /> Book Inverter Service
-              </Button>
-            </a>
+              </a>
+            </Button>
           </div>
         </div>
       </section>

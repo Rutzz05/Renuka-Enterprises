@@ -144,6 +144,14 @@ export default function NavbarV2() {
                   Login
                 </button>
               )}
+              <a 
+                href={`tel:${PHONE}`}
+                onClick={() => setOpen(false)}
+                className="rounded-2xl bg-primary px-4 py-3 text-left text-sm font-medium text-white flex items-center gap-2"
+              >
+                <Phone className="h-4 w-4" />
+                Call now
+              </a>
             </div>
           </div>
         </div>

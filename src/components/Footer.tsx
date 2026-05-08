@@ -23,7 +23,12 @@ export default function Footer() {
         <div>
           <h4 className="text-sm font-semibold text-background mb-3 uppercase tracking-wide">Contact</h4>
           <ul className="space-y-2 text-sm">
-            <li className="flex items-center gap-2"><Phone className="w-4 h-4" /> +91 9823021804</li>
+            <li className="flex items-center gap-2">
+              <Phone className="w-4 h-4" />
+              <a href="tel:+919823021804" className="hover:underline transition-colors">
+                +91 9823021804
+              </a>
+            </li>
             <li className="flex items-center gap-2"><MapPin className="w-4 h-4" /> Nashik, Maharashtra</li>
             <li className="flex items-center gap-2"><Clock className="w-4 h-4" /> Mon–Sat, 9 AM – 7 PM</li>
           </ul>

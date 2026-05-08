@@ -23,7 +23,7 @@ export default function FooterV2() {
         <div>
           <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-white/75">Contact</h3>
           <div className="mt-4 grid gap-4 text-sm text-slate-400">
-            <p className="inline-flex items-center gap-3"><Phone className="h-4 w-4" /> +91 98230 21804</p>
+            <a href="tel:+919823021804" className="inline-flex items-center gap-3 hover:text-white transition-colors"><Phone className="h-4 w-4" /> +91 98230 21804</a>
             <p className="inline-flex items-center gap-3"><MapPin className="h-4 w-4" /> Nashik, Maharashtra</p>
             <p className="inline-flex items-center gap-3"><Clock3 className="h-4 w-4" /> Mon-Sat, 9 AM to 7 PM</p>
           </div>

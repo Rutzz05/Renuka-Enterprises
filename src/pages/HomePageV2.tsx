@@ -116,9 +116,6 @@ function HomePhoto({
 export default function HomePageV2() {
   const { user } = useAuth();
   const [activeSlide, setActiveSlide] = useState(0);
-  const handleCall = () => {
-    window.location.href = `tel:${PHONE}`;
-  };
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -152,10 +149,14 @@ export default function HomePageV2() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button type="button" size="lg" onClick={handleCall} className="w-full touch-manipulation gap-2 rounded-lg sm:w-auto">
-                  <PhoneCall className="h-4 w-4" />
-                  Call Now
-              </Button>
+              <a
+                href={`tel:${PHONE}`}
+                className="relative z-20 inline-flex h-11 w-full touch-manipulation items-center justify-center gap-2 rounded-lg bg-primary px-8 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 hover:shadow-md sm:w-auto"
+                aria-label="Call Renuka Enterprises"
+              >
+                <PhoneCall className="h-4 w-4" />
+                Call Now
+              </a>
               <Button asChild size="lg" variant="outline" className="rounded-lg">
                 <Link to="/contact">
                   Book Service
@@ -282,10 +283,14 @@ export default function HomePageV2() {
               ))}
             </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Button type="button" size="lg" onClick={handleCall} className="w-full touch-manipulation gap-2 rounded-lg bg-emerald-400 text-slate-950 hover:bg-emerald-300 sm:w-auto">
-                  <PhoneCall className="h-4 w-4" />
-                  Call +91 98230 21804
-              </Button>
+              <a
+                href={`tel:${PHONE}`}
+                className="inline-flex h-11 w-full touch-manipulation items-center justify-center gap-2 rounded-lg bg-emerald-400 px-8 text-sm font-semibold text-slate-950 shadow-sm transition hover:bg-emerald-300 hover:shadow-md sm:w-auto"
+                aria-label="Call Renuka Enterprises"
+              >
+                <PhoneCall className="h-4 w-4" />
+                Call +91 98230 21804
+              </a>
               <Button asChild size="lg" variant="outline" className="rounded-lg border-white/20 bg-white/5 text-white hover:bg-white/10">
                 <Link to="/products">View Products</Link>
               </Button>

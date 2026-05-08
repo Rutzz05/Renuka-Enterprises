@@ -152,7 +152,7 @@ export default function HomePageV2() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="w-full gap-2 rounded-lg sm:w-auto">
+              <Button asChild size="lg" className="hidden w-full gap-2 rounded-lg sm:inline-flex sm:w-auto">
                 <a href={`tel:${PHONE}`} onClick={handleCall} aria-label="Call Renuka Enterprises">
                   <PhoneCall className="h-4 w-4" />
                   Call Now
@@ -284,7 +284,7 @@ export default function HomePageV2() {
               ))}
             </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="w-full gap-2 rounded-lg bg-emerald-400 text-slate-950 hover:bg-emerald-300 sm:w-auto">
+              <Button asChild size="lg" className="hidden w-full gap-2 rounded-lg bg-emerald-400 text-slate-950 hover:bg-emerald-300 sm:inline-flex sm:w-auto">
                 <a href={`tel:${PHONE}`} onClick={handleCall} aria-label="Call Renuka Enterprises">
                   <PhoneCall className="h-4 w-4" />
                   Call +91 98230 21804

@@ -101,19 +101,9 @@ export default function NavbarV2() {
           </Button>
         </div>
 
-        <div className="flex items-center gap-2 lg:hidden">
-          <a
-            href={`tel:${PHONE}`}
-            onClick={handleCall}
-            className="inline-flex h-11 w-11 touch-manipulation items-center justify-center rounded-xl bg-primary text-white shadow-sm pointer-events-auto"
-            aria-label="Call Renuka Enterprises"
-          >
-            <Phone className="h-5 w-5" />
-          </a>
-          <button className="rounded-xl p-2 text-slate-700" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </div>
+        <button className="rounded-xl p-2 text-slate-700 lg:hidden" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
 
       {open && (

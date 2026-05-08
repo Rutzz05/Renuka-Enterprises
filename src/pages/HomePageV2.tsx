@@ -131,8 +131,8 @@ export default function HomePageV2() {
   return (
     <div className="bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_42%,#f1f8f6_100%)]">
       <section className="border-b border-slate-200/70 bg-white">
-        <div className="container grid gap-10 py-10 md:py-14 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:py-16">
-          <div className="space-y-7">
+        <div className="container grid gap-7 py-8 md:gap-10 md:py-14 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:py-16">
+          <div className="space-y-5 md:space-y-7">
             <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800">
               <MapPin className="h-4 w-4" />
               Trusted Aquaguard, inverter and battery service in Nashik
@@ -152,11 +152,9 @@ export default function HomePageV2() {
             </div>
 
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="hidden w-full gap-2 rounded-lg sm:inline-flex sm:w-auto">
-                <a href={`tel:${PHONE}`} onClick={handleCall} aria-label="Call Renuka Enterprises">
+              <Button type="button" size="lg" onClick={handleCall} className="w-full touch-manipulation gap-2 rounded-lg sm:w-auto">
                   <PhoneCall className="h-4 w-4" />
                   Call Now
-                </a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-lg">
                 <Link to="/contact">
@@ -194,7 +192,7 @@ export default function HomePageV2() {
               >
                 {heroSlides.map((slide) => (
                   <div key={slide.src} className="relative aspect-[4/3] min-w-full bg-gradient-to-br from-slate-50 via-white to-emerald-50 sm:aspect-[16/11] lg:aspect-auto lg:h-[500px]">
-                    <HomePhoto src={slide.src} alt={slide.alt} fit={slide.fit as "cover" | "contain"} className="h-full w-full p-3 sm:p-5" />
+                    <HomePhoto src={slide.src} alt={slide.alt} fit={slide.fit as "cover" | "contain"} className="h-full w-full p-2 sm:p-5" />
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 to-transparent p-5">
                       <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-200">
                         {slide.label}
@@ -284,11 +282,9 @@ export default function HomePageV2() {
               ))}
             </div>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="hidden w-full gap-2 rounded-lg bg-emerald-400 text-slate-950 hover:bg-emerald-300 sm:inline-flex sm:w-auto">
-                <a href={`tel:${PHONE}`} onClick={handleCall} aria-label="Call Renuka Enterprises">
+              <Button type="button" size="lg" onClick={handleCall} className="w-full touch-manipulation gap-2 rounded-lg bg-emerald-400 text-slate-950 hover:bg-emerald-300 sm:w-auto">
                   <PhoneCall className="h-4 w-4" />
                   Call +91 98230 21804
-                </a>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-lg border-white/20 bg-white/5 text-white hover:bg-white/10">
                 <Link to="/products">View Products</Link>

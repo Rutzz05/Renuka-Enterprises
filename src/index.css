@@ -4,8 +4,8 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 215 36% 15%;
+    --background: 42 33% 98%;
+    --foreground: 145 10% 20%;
 
     --card: 0 0% 100%;
     --card-foreground: 215 25% 15%;
@@ -13,24 +13,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 215 25% 15%;
 
-    --primary: 215 55% 25%;
+    --primary: 157 24% 35%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 169 39% 39%;
+    --secondary: 168 28% 48%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 12% 43%;
+    --muted: 145 18% 95%;
+    --muted-foreground: 145 7% 43%;
 
-    --accent: 169 39% 39%;
+    --accent: 168 28% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214 20% 89%;
-    --input: 214 20% 89%;
-    --ring: 215 55% 25%;
+    --border: 120 10% 87%;
+    --input: 120 10% 87%;
+    --ring: 157 24% 35%;
 
     --radius: 0.625rem;
 
@@ -213,6 +213,56 @@
   .home-footer p, .home-footer a { color: #737c73 !important; }
   .home-footer a:hover { color: #456f63 !important; }
   .home-footer-bottom { border-color: #e2e3dc !important; color: #7c847c !important; }
+
+  /* Shared visual language for the existing route pages. */
+  .route-hero { position: relative; overflow: hidden; background: #f4f2e9; border-bottom: 1px solid #e4e5dc; }
+  .route-hero-copy { position: relative; z-index: 1; padding-top: clamp(3rem, 6vw, 5.25rem); padding-bottom: clamp(3rem, 6vw, 5.25rem); color: #29352f; }
+  .route-hero-copy h1, .route-hero h1 { max-width: 850px; margin-left: auto; margin-right: auto; color: #29352f; font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: clamp(2.35rem, 4.6vw, 4rem); font-weight: 500; letter-spacing: -.04em; line-height: 1.08; }
+  .route-hero-copy p:not(.home-eyebrow), .route-hero-intro { color: #69766c; line-height: 1.75; }
+  .route-hero-copy .home-eyebrow, .route-hero .home-eyebrow { margin-bottom: .85rem; }
+  .route-hero + section.container { padding-top: 3.5rem; }
+  .route-hero + section.container .card-elevated { border: 1px solid #e1e5dc; border-radius: 3px; background: #fff; box-shadow: none; }
+  .route-hero + section.container .card-elevated:hover { border-color: #a9bcb0; box-shadow: 0 12px 28px -26px rgb(32 61 48 / .35); }
+  .products-page { background: #fbfaf6; color: #29352f; }
+  .products-page > section.container { padding-bottom: clamp(3rem, 6vw, 5.5rem); }
+  .products-page > section.container > .grid:first-child > div { border-color: #e1e5dc; border-radius: 3px; box-shadow: none; }
+  .products-page article { border-color: #e1e5dc !important; border-radius: 3px !important; box-shadow: none !important; transition: border-color .2s ease, transform .2s ease; }
+  .products-page article:hover { border-color: #a9bcb0 !important; transform: translateY(-2px); }
+  .products-page article img { transition: transform .3s ease; }
+  .products-page article:hover img { transform: scale(1.025); }
+  .products-page article > div:first-child { background: #f2f1e9 !important; }
+  .portal-page { min-height: 60vh; padding: clamp(1.5rem, 4vw, 3.5rem) max(1rem, calc((100vw - 1200px) / 2)); background: #fbfaf6; color: #29352f; }
+  .portal-hero { margin-bottom: 1.5rem; border: 1px solid #e1e5dc; background: #f1f4ee; color: #29352f; }
+  .portal-hero h1 { color: #29352f; font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-weight: 500; letter-spacing: -.035em; }
+  .portal-hero-intro { color: #68746c; }
+  .portal-hero-button { border-color: #b9c8bd !important; background: #fff !important; color: #3f6e62 !important; }
+  .portal-hero-button:hover { background: #e7efe9 !important; }
+  .portal-page [data-slot="card"] { border-color: #e1e5dc; border-radius: 4px; box-shadow: 0 8px 25px -23px rgb(32 61 48 / .3); }
+  .portal-page [data-slot="card"] h2, .portal-page [data-slot="card"] h3 { color: #29352f; }
+  .admin-portal { padding-top: 0; }
+  .admin-hero { display: flex; flex-direction: column; gap: 1.5rem; border-width: 0 0 1px; padding-right: 0; padding-left: 0; }
+  .admin-hero h1 { max-width: 690px; margin-left: 0; font-size: clamp(2.3rem, 4vw, 3.4rem); }
+  .admin-hero .portal-hero-intro { color: #68746c; }
+  .admin-portal > section.container { margin-top: 0; padding-top: 1rem; padding-bottom: 3.5rem; }
+  .booking-page { min-height: 60vh; background: #fbfaf6; }
+  .booking-hero-copy { color: #29352f; }
+  .booking-hero-copy h1 { max-width: 650px; color: #29352f; font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-weight: 500; letter-spacing: -.04em; }
+  .booking-back-link { color: #65756a; }
+  .booking-back-link:hover { color: #3f6e62; }
+  .booking-intro { color: #68746c; line-height: 1.75; }
+  .booking-points { border: 1px solid #dfe5dc; background: #fff; }
+  .booking-point-icon { background: #eaf1ec; color: #456f63; }
+  .booking-points p:last-child { color: #707b72; }
+  .booking-page > section.container { margin-top: 0; padding-top: 2rem; }
+  .auth-page { min-height: 58vh; padding-top: clamp(3rem, 7vw, 5.5rem); padding-bottom: clamp(3rem, 7vw, 5.5rem); }
+  .auth-page [data-slot="card"] { border: 1px solid #e1e5dc; border-radius: 4px; background: #fff; box-shadow: 0 16px 40px -34px rgb(37 60 47 / .45); }
+  .auth-page [data-slot="card-title"] { color: #29352f; font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: 1.75rem; font-weight: 500; }
+  .auth-page input, .auth-page select, .auth-page textarea, .portal-page input, .portal-page select, .portal-page textarea { border-color: #d9e0d8; border-radius: 3px; background-color: #fff; }
+  .auth-page a, .invoice-page a { color: #456f63; }
+  .invoice-page { padding: 2rem 1rem 3rem; color: #29352f; }
+  .invoice-page #invoice-content { border-color: #e1e5dc !important; border-radius: 4px !important; box-shadow: none !important; }
+  .not-found-page { background: #fbfaf6; color: #29352f; text-align: center; }
+  .not-found-page h1 { color: #456f63; font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; }
 }
 
 @media (max-width: 900px) {
@@ -251,6 +301,12 @@
   .home-care-copy { padding: 3rem 1.35rem 3.5rem; }
   .home-contact { padding: 3.5rem 1.35rem; }
   .home-contact-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .route-hero-copy { padding-right: 1.35rem; padding-left: 1.35rem; }
+  .portal-page { padding-right: 1rem; padding-left: 1rem; }
+  .portal-hero { padding: 1.25rem; }
+  .admin-hero { padding-right: 0; padding-left: 0; }
+  .booking-points { grid-template-columns: 1fr; }
+  .invoice-page { padding-right: .65rem; padding-left: .65rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {

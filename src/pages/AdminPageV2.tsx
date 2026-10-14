@@ -165,26 +165,25 @@ export default function AdminPageV2() {
   }
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#f4f8fb_0%,#ffffff_50%,#eef5f1_100%)]">
+    <div className="portal-page admin-portal">
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(14,60,89,0.96),rgba(15,118,110,0.94))]" />
-        <div className="relative container py-12 text-white">
+        <div className="container portal-hero admin-hero py-10">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/65">Admin control room</p>
+              <p className="home-eyebrow">Admin control room</p>
               <h1 className="mt-4 text-4xl font-bold md:text-5xl">Operations for Renuka Enterprises.</h1>
-              <p className="mt-3 max-w-2xl text-base text-white/75 md:text-lg">
+              <p className="portal-hero-intro mt-3 max-w-2xl text-base md:text-lg">
                 Review bookings, maintain inventory, and generate invoices from one responsive dashboard.
               </p>
-              <p className="mt-3 text-sm text-white/70">Welcome, {user?.name || "Admin"}.</p>
+              <p className="portal-hero-intro mt-3 text-sm">Welcome, {user?.name || "Admin"}.</p>
             </div>
             <div className="flex gap-3">
               <Link to="/products">
-                <Button variant="outline" className="border-white/25 bg-white/10 text-white hover:bg-white/20">
+                <Button variant="outline" className="portal-hero-button">
                   View site
                 </Button>
               </Link>
-              <Button variant="outline" onClick={logout} className="border-white/25 bg-white/10 text-white hover:bg-white/20">
+              <Button variant="outline" onClick={logout} className="portal-hero-button">
                 <LogOut className="mr-2 h-4 w-4" />
                 Logout
               </Button>

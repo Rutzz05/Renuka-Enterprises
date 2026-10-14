@@ -5,7 +5,7 @@ import { User, Shield } from 'lucide-react';
 
 const SelectLoginType = () => {
   return (
-    <div className="container max-w-2xl mx-auto py-12">
+    <div className="auth-page login-choice-page container max-w-2xl mx-auto py-12">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold mb-2">Welcome to Renuka Enterprises</h1>
         <p className="text-muted-foreground">Please select your login type</p>

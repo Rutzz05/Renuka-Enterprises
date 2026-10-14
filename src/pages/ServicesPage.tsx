@@ -28,8 +28,8 @@ export default function ServicesPage() {
 
   return (
     <>
-      <section className="hero" style={{ background: "var(--hero-gradient)" }}>
-        <div className="container text-center text-primary-foreground">
+      <section className="hero route-hero">
+        <div className="container route-hero-copy">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-3">Our Services</h1>
           <p className="opacity-90 max-w-lg mx-auto">
             Comprehensive Aquaguard & Inverter solutions for your home and business.

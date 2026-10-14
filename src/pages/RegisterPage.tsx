@@ -43,7 +43,7 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="container max-w-md mx-auto py-12">
+    <div className="auth-page container max-w-md mx-auto py-12">
       <Card>
         <CardHeader>
           <CardTitle>Register</CardTitle>

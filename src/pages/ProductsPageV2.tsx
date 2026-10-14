@@ -117,13 +117,12 @@ export default function ProductsPageV2() {
   }, []);
 
   return (
-    <div className="bg-[linear-gradient(180deg,#fbfdff_0%,#eef6ff_25%,#ffffff_100%)]">
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-[linear-gradient(130deg,rgba(12,74,110,0.96),rgba(13,148,136,0.92))]" />
-        <div className="relative container py-16 text-white">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-white/65">Products</p>
+    <div className="products-page">
+      <section className="route-hero">
+        <div className="container route-hero-copy py-16">
+          <p className="home-eyebrow">Products</p>
           <h1 className="mt-4 text-4xl font-bold md:text-5xl">Trusted systems for clean water and reliable backup power.</h1>
-          <p className="mt-4 max-w-2xl text-base text-white/75 md:text-lg">
+          <p className="route-hero-intro mt-4 max-w-2xl text-base md:text-lg">
             Browse the core models we frequently recommend, install, and service for homes, shops, and offices across Nashik.
           </p>
         </div>

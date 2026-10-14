@@ -44,8 +44,8 @@ const App = () => (
               <Route path="/admin" element={<ProtectedRoute role="admin"><AdminPageV2 /></ProtectedRoute>} />
               <Route path="/booking" element={<ProtectedRoute><BookingPage /></ProtectedRoute>} />
               <Route path="/invoice/:id" element={<ProtectedRoute><InvoicePageV3 /></ProtectedRoute>} />
+              <Route path="*" element={<NotFound />} />
             </Route>
-            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

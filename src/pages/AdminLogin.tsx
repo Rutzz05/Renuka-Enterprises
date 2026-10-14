@@ -42,7 +42,7 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="container max-w-md mx-auto py-12">
+    <div className="auth-page container max-w-md mx-auto py-12">
       <Card>
         <CardHeader className="text-center">
           <Shield className="w-12 h-12 mx-auto mb-4 text-secondary" />

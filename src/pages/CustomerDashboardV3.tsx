@@ -120,16 +120,16 @@ export default function CustomerDashboardV3() {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-4 rounded-[2rem] border border-border/60 bg-gradient-to-r from-slate-950 via-slate-900 to-slate-800 px-6 py-8 text-white shadow-xl lg:flex-row lg:items-center lg:justify-between">
+    <div className="portal-page space-y-8">
+      <div className="portal-hero flex flex-col gap-4 px-6 py-8 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <p className="text-sm uppercase tracking-[0.2em] text-amber-200">Customer dashboard</p>
+          <p className="home-eyebrow">Customer dashboard</p>
           <h1 className="mt-2 font-serif text-3xl font-semibold">Welcome, {user?.name || "Customer"}</h1>
-          <p className="mt-2 max-w-2xl text-sm text-slate-300">
+          <p className="portal-hero-intro mt-2 max-w-2xl text-sm">
             Track service requests, review invoice history, and manage schedule changes without leaving the portal.
           </p>
         </div>
-        <Button variant="outline" className="border-white/20 bg-white/5 text-white hover:bg-white/10" onClick={loadData}>
+        <Button variant="outline" className="portal-hero-button" onClick={loadData}>
           <RefreshCcw className="mr-2 h-4 w-4" />
           Refresh
         </Button>

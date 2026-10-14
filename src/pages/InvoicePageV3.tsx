@@ -76,7 +76,7 @@ export default function InvoicePageV3() {
   }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="invoice-page mx-auto max-w-6xl space-y-6">
       <div className="invoice-toolbar flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm uppercase tracking-[0.2em] text-slate-500">Invoice</p>

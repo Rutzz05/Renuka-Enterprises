@@ -137,14 +137,7 @@
   .home-offerings svg { width: 15px; height: 15px; color: #477c73; }
   .home-hero-visual { position: relative; min-width: 0; padding: 0 0 1.5rem 1.5rem; }
   .home-hero-visual::before { position: absolute; inset: 1.5rem 1.5rem 0 0; border: 1px solid #c7d7d3; content: ""; }
-  .home-hero-visual > img { position: relative; display: block; width: 100%; height: clamp(320px, 39vw, 490px); object-fit: cover; object-position: 58% center; }
-  .home-image-note { position: absolute; right: -1rem; bottom: 2.7rem; display: flex; align-items: center; gap: .75rem; padding: .85rem 1rem; background: white; box-shadow: 0 12px 32px #1725361c; }
-  .home-image-note-mark { display: grid; width: 38px; height: 38px; place-items: center; background: #edf4f2; color: #477c73; }
-  .home-image-note-mark svg { width: 18px; height: 18px; }
-  .home-image-note strong, .home-image-note small { display: block; }
-  .home-image-note strong { color: #172536; font-size: .82rem; }
-  .home-image-note small { margin-top: .15rem; color: #667381; font-size: .73rem; }
-  .home-image-caption { position: absolute; top: 1rem; right: 0; color: #62746f; font-size: .62rem; font-weight: 700; letter-spacing: .2em; writing-mode: vertical-rl; }
+  .home-hero-visual > img { position: relative; display: block; width: 100%; height: auto; aspect-ratio: 404 / 316; object-fit: contain; background: #fff; }
   .home-categories { padding-top: clamp(3.8rem, 7vw, 6rem); padding-bottom: clamp(3.8rem, 7vw, 6rem); }
   .home-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 1.5rem; margin-bottom: 2rem; }
   .home-section-heading h2, .home-service-inner h2 { max-width: 610px; margin: .55rem 0 0; color: #172536; font-size: clamp(1.8rem, 3vw, 2.45rem); letter-spacing: -.035em; line-height: 1.2; }
@@ -178,8 +171,6 @@
   .home-hero-copy { max-width: none; }
   .home-hero-visual { margin: 0 .5rem; padding-left: .9rem; }
   .home-hero-visual::before { inset: .9rem .9rem 0 0; }
-  .home-hero-visual > img { height: min(78vw, 390px); }
-  .home-image-note { right: -.25rem; bottom: 2rem; }
   .home-section-heading { align-items: flex-start; flex-direction: column; }
   .home-category-grid { grid-template-columns: 1fr; }
   .home-category-card + .home-category-card { border-top: 1px solid #e0e5e5; border-left: 0; }

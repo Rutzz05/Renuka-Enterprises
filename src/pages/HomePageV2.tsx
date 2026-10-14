@@ -76,11 +76,6 @@ export default function HomePageV2() {
               alt="Aquaguard purifier in a bright home kitchen"
               fetchPriority="high"
             />
-            <div className="home-image-note">
-              <span className="home-image-note-mark"><Droplets aria-hidden="true" /></span>
-              <span><strong>Care for the things</strong><small>your home relies on</small></span>
-            </div>
-            <span className="home-image-caption">WATER · POWER · HOME</span>
           </div>
         </div>
       </section>

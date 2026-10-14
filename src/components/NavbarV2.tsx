@@ -145,9 +145,8 @@ export default function NavbarV2() {
                 </button>
               )}
               <a 
-                href={`tel:${PHONE}`}
-                onClick={() => setOpen(false)}
-                className="rounded-2xl bg-primary px-4 py-3 text-left text-sm font-medium text-white flex items-center gap-2"
+                href={`tel:+919823021804`}
+                className="rounded-2xl bg-primary px-4 py-3 text-left text-sm font-medium text-white flex items-center gap-2 transition-transform active:scale-95"
               >
                 <Phone className="h-4 w-4" />
                 Call now

@@ -37,25 +37,26 @@ export default function NavbarV2() {
   const dashboardLink = user?.role === "admin" ? "/admin" : "/dashboard";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
+    <header className="home-nav sticky top-0 z-50 border-b border-slate-200/70 bg-white/85 backdrop-blur-xl">
       <div className="container flex h-20 items-center justify-between py-3">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary via-blue-700 to-emerald-600 text-lg font-black text-white shadow-md ring-1 ring-slate-900/10">
-            R
+        <Link to="/" className="flex items-center gap-3" aria-label="Renuka Enterprises home">
+          <div className="home-nav-brand-mark" aria-hidden="true">
+            RE
           </div>
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-primary/70">Renuka</p>
-            <p className="text-base font-semibold text-slate-900">Enterprises</p>
+          <div className="leading-tight">
+            <p className="home-nav-brand-name">Renuka Enterprises</p>
+            <p className="home-nav-brand-sub">HOME & POWER</p>
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-1 lg:flex" aria-label="Main navigation">
           {links.map((link) => (
             <Link
               key={link.to}
               to={link.to}
+              aria-current={pathname === link.to ? "page" : undefined}
               className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                pathname === link.to ? "bg-primary text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                pathname === link.to ? "home-nav-active" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`}
             >
               {link.label}
@@ -64,8 +65,9 @@ export default function NavbarV2() {
           {user && (
             <Link
               to={dashboardLink}
+              aria-current={pathname === dashboardLink ? "page" : undefined}
               className={`rounded-full px-4 py-2 text-sm font-medium transition ${
-                pathname === dashboardLink ? "bg-primary text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                pathname === dashboardLink ? "home-nav-active" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`}
             >
               {user.role === "admin" ? "Admin" : "Dashboard"}
@@ -93,7 +95,7 @@ export default function NavbarV2() {
             </Link>
           )}
 
-          <Button asChild className="rounded-full">
+          <Button asChild className="home-nav-call rounded-full">
             <a href={`tel:${PHONE}`} onClick={handleCall} aria-label="Call Renuka Enterprises">
               <Phone className="mr-2 h-4 w-4" />
               Call now
@@ -101,13 +103,13 @@ export default function NavbarV2() {
           </Button>
         </div>
 
-        <button className="rounded-xl p-2 text-slate-700 lg:hidden" onClick={() => setOpen((value) => !value)} aria-label="Toggle navigation">
+        <button className="rounded-xl p-2 text-slate-700 lg:hidden" onClick={() => setOpen((value) => !value)} aria-label={open ? "Close navigation" : "Open navigation"} aria-expanded={open} aria-controls="mobile-navigation">
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
       {open && (
-        <div className="border-t border-slate-200 bg-white lg:hidden">
+        <div id="mobile-navigation" className="border-t border-slate-200 bg-white lg:hidden">
           <div className="container py-4">
             <div className="grid gap-2">
               {links.map((link) => (

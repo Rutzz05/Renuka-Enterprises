@@ -128,7 +128,7 @@ export default function ProductsPageV2() {
         </div>
       </section>
 
-      <section className="container -mt-8 relative z-10 pb-14">
+      <section className="container relative z-10 pb-14">
         <div className="grid gap-4 md:grid-cols-3">
           {[
             { label: "Curated range", value: "Field-tested products only", icon: Sparkles },

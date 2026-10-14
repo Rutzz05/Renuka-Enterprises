@@ -31,7 +31,7 @@ export default function ServicesPage() {
       <section className="hero route-hero">
         <div className="container route-hero-copy">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-3">Our Services</h1>
-          <p className="opacity-90 max-w-lg mx-auto">
+          <p className="route-hero-intro max-w-lg">
             Comprehensive Aquaguard & Inverter solutions for your home and business.
           </p>
         </div>

@@ -215,10 +215,10 @@
   .home-footer-bottom { border-color: #e2e3dc !important; color: #7c847c !important; }
 
   /* Shared visual language for the existing route pages. */
-  .route-hero { position: relative; overflow: hidden; background: #f4f2e9; border-bottom: 1px solid #e4e5dc; }
-  .route-hero-copy { position: relative; z-index: 1; padding-top: clamp(3rem, 6vw, 5.25rem); padding-bottom: clamp(3rem, 6vw, 5.25rem); color: #29352f; }
-  .route-hero-copy h1, .route-hero h1 { max-width: 850px; margin-left: auto; margin-right: auto; color: #29352f; font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: clamp(2.35rem, 4.6vw, 4rem); font-weight: 500; letter-spacing: -.04em; line-height: 1.08; }
-  .route-hero-copy p:not(.home-eyebrow), .route-hero-intro { color: #69766c; line-height: 1.75; }
+  .route-hero { position: relative; overflow: hidden; padding-top: 0 !important; padding-bottom: 0 !important; background: #f4f2e9; border-bottom: 1px solid #e4e5dc; }
+  .route-hero-copy { position: relative; z-index: 1; padding-top: clamp(2.5rem, 4vw, 3.5rem) !important; padding-bottom: clamp(2.5rem, 4vw, 3.5rem) !important; color: #29352f; text-align: left; }
+  .route-hero .route-hero-copy h1, .booking-hero-copy h1 { max-width: 850px; margin: 0; color: #29352f; font-family: "Iowan Old Style", "Palatino Linotype", Georgia, serif; font-size: clamp(2.25rem, 3.6vw, 3.5rem); font-weight: 500; letter-spacing: -.04em; line-height: 1.08; text-align: left; }
+  .route-hero-copy p:not(.home-eyebrow), .route-hero-intro { max-width: 640px; margin: .8rem 0 0; color: #69766c; line-height: 1.7; text-align: left; }
   .route-hero-copy .home-eyebrow, .route-hero .home-eyebrow { margin-bottom: .85rem; }
   .route-hero + section.container { padding-top: 3.5rem; }
   .route-hero + section.container .card-elevated { border: 1px solid #e1e5dc; border-radius: 3px; background: #fff; box-shadow: none; }

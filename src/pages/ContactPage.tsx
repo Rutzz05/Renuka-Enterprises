@@ -13,7 +13,7 @@ export default function ContactPage() {
       <section className="hero route-hero">
         <div className="container route-hero-copy">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-3">Contact Us</h1>
-          <p className="opacity-95 max-w-lg mx-auto text-lg">
+          <p className="route-hero-intro max-w-lg text-lg">
             Reach out for service requests, queries, or product enquiries.
           </p>
         </div>

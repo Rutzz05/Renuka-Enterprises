@@ -1,304 +1,130 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowRight,
   BatteryCharging,
-  CheckCircle2,
-  Clock3,
+  Check,
   Droplets,
   MapPin,
   PhoneCall,
-  ShieldCheck,
-  Star,
   Wrench,
 } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
 const PHONE = "+919823021804";
 
-const homeImages = {
-  aquaguardFamily: "/photos/1.jpg",
-  aquaguardService: "/photos/2.jpeg",
-  aquaguardPurifiers: "/photos/3.jpeg",
-  aquaguardProduct: "/photos/4.jpeg",
-  inverterBatterySet: "/photos/5.jpg",
-  sfBattery: "/photos/6.webp",
-  inverterSetup: "/photos/7.jpeg",
-};
-
-const heroSlides = [
+const categories = [
   {
-    src: homeImages.aquaguardFamily,
-    alt: "Aquaguard water purifier in a family kitchen",
-    label: "Clean Water for Families",
-    fit: "contain",
-  },
-  {
-    src: homeImages.aquaguardService,
-    alt: "Aquaguard home service and purifier support",
-    label: "Aquaguard Sales & Service",
-    fit: "contain",
-  },
-  {
-    src: homeImages.inverterSetup,
-    alt: "Inverter and battery backup setup",
-    label: "Inverter & Battery Backup",
-    fit: "contain",
-  },
-  {
-    src: homeImages.inverterBatterySet,
-    alt: "Inverter and tubular battery products",
-    label: "Filter & AMC Support",
-    fit: "contain",
-  },
-];
-
-const services = [
-  {
-    title: "Aquaguard service",
-    description: "Installation, filter change, leakage repair, maintenance, and purifier support.",
+    eyebrow: "WATER PURIFICATION",
+    title: "Aquaguard purifiers",
+    description: "Explore water purifiers, installation, filter changes and ongoing care.",
+    image: "/photos/3.jpeg",
+    alt: "Aquaguard water purifier range",
     icon: Droplets,
-    image: homeImages.aquaguardProduct,
-    fit: "contain",
+    to: "/products",
   },
   {
-    title: "Inverter service",
-    description: "Repair, backup issues, charging problems, and routine checks for power systems.",
+    eyebrow: "HOME POWER",
+    title: "Inverters & UPS",
+    description: "Find backup power products and support for home and business use.",
+    image: "/photos/5.jpg",
+    alt: "Home inverter and battery products",
     icon: BatteryCharging,
-    image: homeImages.inverterSetup,
-    fit: "contain",
+    to: "/products",
   },
   {
-    title: "Battery support",
-    description: "Battery health checks, replacement guidance, and reliable backup support.",
-    icon: ShieldCheck,
-    image: homeImages.sfBattery,
-    fit: "contain",
+    eyebrow: "SERVICE & CARE",
+    title: "Repairs & maintenance",
+    description: "Get help with installation, troubleshooting and routine servicing.",
+    image: "/photos/2.jpeg",
+    alt: "Technician supporting a family with a water purifier",
+    icon: Wrench,
+    to: "/services",
   },
 ];
-
-const trustPoints = [
-  { label: "10+ years", detail: "Local service experience", icon: Star },
-  { label: "Nashik", detail: "Homes, shops, and offices", icon: MapPin },
-  { label: "Quick help", detail: "Call and WhatsApp support", icon: PhoneCall },
-  { label: "AMC support", detail: "Regular maintenance plans", icon: Wrench },
-];
-
-function HomePhoto({
-  src,
-  alt,
-  className,
-  fit = "cover",
-  position = "center center",
-}: {
-  src: string;
-  alt: string;
-  className: string;
-  fit?: "cover" | "contain";
-  position?: string;
-}) {
-  const [imageSrc, setImageSrc] = useState(src);
-
-  return (
-    <img
-      src={imageSrc}
-      alt={alt}
-      className={className}
-      loading="lazy"
-      style={{ objectFit: fit, objectPosition: position }}
-      onError={() => setImageSrc("/placeholder.svg")}
-    />
-  );
-}
 
 export default function HomePageV2() {
   const { user } = useAuth();
-  const [activeSlide, setActiveSlide] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActiveSlide((current) => (current + 1) % heroSlides.length);
-    }, 4200);
-
-    return () => window.clearInterval(timer);
-  }, []);
 
   return (
-    <div className="bg-[linear-gradient(180deg,#f8fbff_0%,#ffffff_42%,#f1f8f6_100%)]">
-      <section className="border-b border-slate-200/70 bg-white">
-        <div className="container grid gap-7 py-8 md:gap-10 md:py-14 lg:grid-cols-[1.02fr_0.98fr] lg:items-center lg:py-16">
-          <div className="space-y-5 md:space-y-7">
-            <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-800">
-              <MapPin className="h-4 w-4" />
-              Trusted Aquaguard, inverter and battery service in Nashik
-            </div>
-
-            <div className="space-y-4">
-              <h1 className="max-w-3xl text-4xl font-extrabold leading-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                Renuka Enterprises
-              </h1>
-              <p className="max-w-2xl text-xl font-semibold text-slate-800 sm:text-2xl">
-                Aquaguard, inverter and battery service you can rely on.
-              </p>
-              <p className="max-w-2xl text-base leading-7 text-slate-600">
-                We help homes, shops, and local businesses with product supply, installation,
-                repair, AMC visits, and after-sales support with clear communication.
-              </p>
-            </div>
-
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <a
-                href={`tel:${PHONE}`}
-                className="relative z-20 inline-flex h-11 w-full touch-manipulation items-center justify-center gap-2 rounded-lg bg-primary px-8 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90 hover:shadow-md sm:w-auto"
-                aria-label="Call Renuka Enterprises"
-              >
-                <PhoneCall className="h-4 w-4" />
-                Call Now
-              </a>
-              <Button asChild size="lg" variant="outline" className="rounded-lg">
-                <Link to="/contact">
-                  Book Service
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              {[
-                ["Aquaguard", "Sales & service"],
-                ["Inverter", "Repair & install"],
-                ["Battery", "Health & replacement"],
-              ].map(([label, detail]) => (
-                <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                  <p className="font-semibold text-slate-950">{label}</p>
-                  <p className="text-sm text-slate-600">{detail}</p>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-sm text-slate-600">
-              {user
-                ? `Welcome back, ${user.name}. Your bookings and invoices are available in your dashboard.`
-                : "Login is available for customer bookings, invoice tracking, and admin management."}
+    <div className="home-page">
+      <section className="home-hero">
+        <div className="container home-hero-grid">
+          <div className="home-hero-copy">
+            <p className="eyebrow"><MapPin aria-hidden="true" /> Serving Nashik, Maharashtra</p>
+            <h1>Everyday essentials.<br /><span>Expertly looked after.</span></h1>
+            <p className="home-hero-intro">
+              Water purifier and power backup products, with practical advice and service support from Renuka Enterprises.
             </p>
+            <div className="home-hero-actions">
+              <Button asChild size="lg" className="home-primary-button">
+                <Link to="/products">Explore products <ArrowRight aria-hidden="true" /></Link>
+              </Button>
+              <a className="home-call-link" href={`tel:${PHONE}`} aria-label="Call Renuka Enterprises">
+                <PhoneCall aria-hidden="true" /> <span>Call <strong>+91 98230 21804</strong></span>
+              </a>
+            </div>
+            <div className="home-offerings" aria-label="Products and services">
+              <span><Check aria-hidden="true" /> Aquaguard</span>
+              <span><Check aria-hidden="true" /> Inverters</span>
+              <span><Check aria-hidden="true" /> Batteries</span>
+            </div>
           </div>
-
-          <div className="relative">
-            <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-100 shadow-2xl">
-              <div
-                className="flex transition-transform duration-700 ease-out"
-                style={{ transform: `translateX(-${activeSlide * 100}%)` }}
-              >
-                {heroSlides.map((slide) => (
-                  <div key={slide.src} className="relative aspect-[4/3] min-w-full bg-gradient-to-br from-slate-50 via-white to-emerald-50 sm:aspect-[16/11] lg:aspect-auto lg:h-[500px]">
-                    <HomePhoto src={slide.src} alt={slide.alt} fit={slide.fit as "cover" | "contain"} className="h-full w-full p-2 sm:p-5" />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/85 to-transparent p-5">
-                      <p className="text-sm font-semibold uppercase tracking-[0.18em] text-emerald-200">
-                        {slide.label}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          <div className="home-hero-visual">
+            <img
+              src="/photos/1.jpg"
+              alt="Aquaguard purifier in a bright home kitchen"
+              fetchPriority="high"
+            />
+            <div className="home-image-note">
+              <span className="home-image-note-mark"><Droplets aria-hidden="true" /></span>
+              <span><strong>Care for the things</strong><small>your home relies on</small></span>
             </div>
-
-            <div className="absolute bottom-5 right-5 flex gap-2">
-              {heroSlides.map((slide, index) => (
-                <button
-                  key={slide.src}
-                  type="button"
-                  aria-label={`Show ${slide.label}`}
-                  onClick={() => setActiveSlide(index)}
-                  className={`h-2.5 rounded-full transition-all ${
-                    activeSlide === index ? "w-8 bg-white" : "w-2.5 bg-white/50 hover:bg-white/80"
-                  }`}
-                />
-              ))}
-            </div>
+            <span className="home-image-caption">WATER · POWER · HOME</span>
           </div>
         </div>
       </section>
 
-      <section className="container py-12 md:py-16">
-        <div className="grid gap-4 md:grid-cols-4">
-          {trustPoints.map(({ label, detail, icon: Icon }) => (
-            <div key={label} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-              <Icon className="h-5 w-5 text-primary" />
-              <p className="mt-4 text-xl font-bold text-slate-950">{label}</p>
-              <p className="text-sm text-slate-600">{detail}</p>
-            </div>
+      <section className="home-categories container" aria-labelledby="categories-heading">
+        <div className="home-section-heading">
+          <div>
+            <p className="eyebrow">WHAT WE DO</p>
+            <h2 id="categories-heading">Solutions for a more comfortable home.</h2>
+          </div>
+          <Link className="home-text-link" to="/services">View all services <ArrowRight aria-hidden="true" /></Link>
+        </div>
+
+        <div className="home-category-grid">
+          {categories.map(({ eyebrow, title, description, image, alt, icon: Icon, to }) => (
+            <Link to={to} className="home-category-card" key={title}>
+              <div className="home-category-image">
+                <img src={image} alt={alt} loading="lazy" />
+                <span className="home-category-icon"><Icon aria-hidden="true" /></span>
+              </div>
+              <div className="home-category-copy">
+                <p className="eyebrow">{eyebrow}</p>
+                <h3>{title}</h3>
+                <p>{description}</p>
+                <span className="home-card-link">Learn more <ArrowRight aria-hidden="true" /></span>
+              </div>
+            </Link>
           ))}
         </div>
       </section>
 
-      <section className="container pb-12 md:pb-16">
-        <div className="mb-7 max-w-3xl">
-          <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary/70">Our services</p>
-          <h2 className="mt-2 text-3xl font-bold text-slate-950">Solutions for everyday power and water needs</h2>
-          <p className="mt-3 text-sm leading-6 text-slate-600">
-            Product supply and dependable service support for essential systems used in homes and businesses.
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          {services.map(({ title, description, icon: Icon, image, fit }) => (
-            <article key={title} className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-              <div className="aspect-[4/3] bg-gradient-to-br from-slate-50 via-white to-emerald-50 sm:aspect-[16/10]">
-                <HomePhoto src={image} alt={title} fit={fit as "cover" | "contain"} className="h-full w-full p-4" />
-              </div>
-              <div className="space-y-4 p-6">
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
-                  <Icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-slate-950">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="container pb-14 md:pb-20">
-        <div className="grid gap-8 rounded-2xl border border-slate-200 bg-slate-950 p-6 text-white shadow-xl md:grid-cols-[0.95fr_1.05fr] md:p-8 lg:p-10">
-          <div className="overflow-hidden rounded-xl bg-white">
-            <HomePhoto src={homeImages.aquaguardPurifiers} alt="Aquaguard water purifier product range" fit="contain" className="h-full min-h-64 w-full bg-gradient-to-br from-slate-50 via-white to-emerald-50 p-6" />
+      <section className="home-service-band">
+        <div className="container home-service-inner">
+          <div>
+            <p className="eyebrow">HERE WHEN YOU NEED US</p>
+            <h2>From choosing a product to keeping it running.</h2>
+            <p>Talk with our team about a new purchase, a service visit or the right next step for an existing appliance.</p>
           </div>
-          <div className="flex flex-col justify-center">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-300">Need help quickly?</p>
-            <h2 className="mt-3 text-3xl font-bold">Book a service visit or ask for product guidance</h2>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
-              Whether it is urgent repair, routine maintenance, filter replacement, or a new product enquiry,
-              we can guide you on the right next step.
-            </p>
-            <div className="mt-6 grid gap-3 text-sm text-slate-200 sm:grid-cols-2">
-              {["Same-day call response", "Service across Nashik", "Product and AMC guidance", "Clear visit communication"].map((point) => (
-                <p key={point} className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-300" />
-                  {point}
-                </p>
-              ))}
-            </div>
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a
-                href={`tel:${PHONE}`}
-                className="inline-flex h-11 w-full touch-manipulation items-center justify-center gap-2 rounded-lg bg-emerald-400 px-8 text-sm font-semibold text-slate-950 shadow-sm transition hover:bg-emerald-300 hover:shadow-md sm:w-auto"
-                aria-label="Call Renuka Enterprises"
-              >
-                <PhoneCall className="h-4 w-4" />
-                Call +91 98230 21804
-              </a>
-              <Button asChild size="lg" variant="outline" className="rounded-lg border-white/20 bg-white/5 text-white hover:bg-white/10">
-                <Link to="/products">View Products</Link>
-              </Button>
-            </div>
-            <p className="mt-5 flex items-center gap-2 text-sm text-slate-400">
-              <Clock3 className="h-4 w-4" />
-              Mon-Sat, 9 AM to 7 PM
-            </p>
+          <div className="home-service-actions">
+            <Button asChild size="lg" className="home-light-button">
+              <Link to="/contact">Request a callback <ArrowRight aria-hidden="true" /></Link>
+            </Button>
+            {user && <Link className="home-account-link" to={user.role === "admin" ? "/admin" : "/dashboard"}>Go to your {user.role === "admin" ? "admin" : "customer"} dashboard</Link>}
+            {!user && <Link className="home-account-link" to="/login">Customer login <ArrowRight aria-hidden="true" /></Link>}
           </div>
         </div>
       </section>
